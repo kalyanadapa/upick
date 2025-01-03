@@ -11,7 +11,7 @@ const Home = () => {
 
   return (
     <>
-      {!keyword ? <Header /> : null}
+      {/* {!keyword ? <Header /> : null}
       {isLoading ? (
         <Loader />
       ) : isError ? (
@@ -43,7 +43,8 @@ const Home = () => {
             </div>
           </div>
         </>
-      )}
+      )} */}
+      welcome to home Page
     </>
   );
 };

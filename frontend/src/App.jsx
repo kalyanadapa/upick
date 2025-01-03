@@ -7,8 +7,8 @@ const App = () => {
   return (
     <>
       <ToastContainer />
-      <Navigation />
-      <main className="py-3">
+      {/* <Navigation /> */}
+      <main className="">
         <Outlet />
       </main>
     </>
