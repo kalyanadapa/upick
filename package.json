@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
- "scripts": {
+  "scripts": {
     "backend": "nodemon backend/src/index.js",
     "frontend": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
@@ -21,6 +21,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.3.1",
+    "@mui/material": "^6.3.1",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
