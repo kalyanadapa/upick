@@ -103,7 +103,7 @@ import axios from "axios";
 import { Badge, InputBase,Button, AppBar, Toolbar, Container } from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 import SignUpModal from './SignUp.jsx'
-
+import { Link } from 'react-router';
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -182,44 +182,49 @@ export default function Header() {
       
       />
           <div className="flex-shrink-0">
-            <a href="/" className="flex items-center">
+          <Link
+        to={"/"}  // Use Link here for navigation
+       className="flex items-center"
+      >
+            
               <span className="text-4xl font-bold bg-gradient-to-r from-pink-700 to-orange-500 text-transparent bg-clip-text">
                 Upick
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8 relative">
-            {Object.keys(categories).map((link) => (
-              <div
-                key={link}
-                className="relative"
-                onMouseEnter={() => handleMouseEnter(link)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <a
-                  href={`/${link}`}
-                  className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-                >
-                  {link.toUpperCase().replace('-', ' & ')}
-                </a>
-                {hoveredLink === link && (
-                  <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md p-4">
-                    {categories[link].map((category) => (
-                      <a
-                        key={category}
-                        href={`/${link}/${category.toLowerCase()}`}
-                        className="block text-gray-700 hover:text-gray-900 px-3 py-1 text-sm"
-                      >
-                        {category}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
+  {Object.keys(categories).map((link) => (
+    <div
+      key={link}
+      className="relative"
+      onMouseEnter={() => handleMouseEnter(link)}
+      onMouseLeave={handleMouseLeave}
+    >
+      <Link
+        to={`/category/${link}`}  // Use Link here for navigation
+        className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+      >
+        {link.toUpperCase().replace('-', ' & ')}
+      </Link>
+      {hoveredLink === link && (
+        <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+          {categories[link].map((category) => (
+            <Link
+              key={category}
+              to={`/${link}/${category.toLowerCase()}`}  // Use Link here as well
+              className="block text-gray-700 hover:text-gray-900 px-3 py-1 text-sm"
+            >
+              {category}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  ))}
+</nav>
+
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-lg mx-8">
