@@ -99,16 +99,22 @@
 //   );
 // }
 import { useState } from 'react';
-import axios from "axios";
 import { Badge, InputBase,Button, AppBar, Toolbar, Container } from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 import SignUpModal from './SignUp.jsx'
 import { Link } from 'react-router';
+import { useDispatch } from "react-redux";
+import { useRegisterMutation } from "../redux/api/usersApiSlice.js";
+import { setCredentials } from "../redux/features/auth/authSlice";
+import { toast } from "react-toastify";
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
+  const dispatch = useDispatch();
+  // eslint-disable-next-line no-unused-vars
+  const [register, { isLoading }] = useRegisterMutation();
   const categories = {
     men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
     women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
@@ -118,6 +124,7 @@ export default function Header() {
   };
   const handleMouseEnter = (link) => setHoveredLink(link);
   const handleMouseLeave = () => setHoveredLink(null);
+  // eslint-disable-next-line no-unused-vars
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -144,15 +151,18 @@ export default function Header() {
       }
   
       // Make API call to backend
-      const response = await axios.post("http://localhost:8000/api/v1/users/register", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
+      // const response = await axios.post("http://localhost:8000/api/v1/users/register", form, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+      const response = await register(form).unwrap(); // Use unwrap() to get the raw response
+      console.log("User registered successfully:", response);
+      dispatch(setCredentials({ ...response }));
       // Handle successful response
       console.log("User registered successfully:", response.data);
-      alert("User registered successfully!");
+      toast.success("User successfully registered");
+    
       setIsModalOpen(false)
       // Clear form data after successful registration
       setFormData({
