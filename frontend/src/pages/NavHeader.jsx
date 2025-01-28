@@ -171,7 +171,7 @@ export default function Header() {
   };
   
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 }} className="z-50">
+    <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
         <Toolbar className="flex justify-between items-center py-4">
           {/* Logo */}
