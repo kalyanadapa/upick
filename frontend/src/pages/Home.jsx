@@ -9,6 +9,8 @@ import "swiper/css"; // Swiper core styles
 import "swiper/css/navigation"; // Navigation styles
 import 'swiper/css/autoplay'; 
 import { Autoplay, Navigation, Pagination } from "swiper/modules"; // Fixed import
+import ProductCategories from "./ProductCategories";
+
 const images = [
   "https://res.cloudinary.com/dh0xxfq9y/image/upload/v1737971057/men_docgda.webp",
   "https://res.cloudinary.com/dh0xxfq9y/image/upload/v1737971056/ttclq_pgqnux.webp",
@@ -78,6 +80,7 @@ const Home = () => {
         </>
       )} */}
      <SwiperCarousel images= { images}/>
+     <ProductCategories/>
     </>
   );
 };

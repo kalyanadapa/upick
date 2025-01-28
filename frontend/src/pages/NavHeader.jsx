@@ -116,7 +116,6 @@ export default function Header() {
     'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
     beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
   };
-   console.log(Object.keys(categories))
   const handleMouseEnter = (link) => setHoveredLink(link);
   const handleMouseLeave = () => setHoveredLink(null);
   const [formData, setFormData] = useState({
