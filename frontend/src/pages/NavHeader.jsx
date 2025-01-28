@@ -99,13 +99,16 @@
 //   );
 // }
 import { useState } from 'react';
-import { Badge, InputBase, AppBar, Toolbar, Container } from '@mui/material';
+import axios from "axios";
+import { Badge, InputBase,Button, AppBar, Toolbar, Container } from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
+import SignUpModal from './SignUp.jsx'
 
 export default function Header() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredLink, setHoveredLink] = useState(null);
-
+  const [hovered, setHovered]= useState(false);
   const categories = {
     men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
     women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
@@ -116,12 +119,69 @@ export default function Header() {
    console.log(Object.keys(categories))
   const handleMouseEnter = (link) => setHoveredLink(link);
   const handleMouseLeave = () => setHoveredLink(null);
-
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    username: "",
+    password: "",
+    avatar: null,
+    coverImage: null,
+  });
+  const handleSignUp = async (formData) => {
+    try {
+      // Creating a FormData object for file uploads
+      const form = new FormData();
+      form.append("fullName", formData.fullName);
+      form.append("email", formData.email);
+      form.append("username", formData.username);
+      form.append("password", formData.password);
+  
+      // Append avatar and cover image if available
+      if (formData.avatar) {
+        form.append("avatar", formData.avatar);
+      }
+      if (formData.coverImage) {
+        form.append("coverImage", formData.coverImage);
+      }
+  
+      // Make API call to backend
+      const response = await axios.post("http://localhost:8000/api/v1/users/register", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      // Handle successful response
+      console.log("User registered successfully:", response.data);
+      alert("User registered successfully!");
+      setIsModalOpen(false)
+      // Clear form data after successful registration
+      setFormData({
+        fullName: "",
+        email: "",
+        username: "",
+        password: "",
+        avatar: null,
+        coverImage: null,
+      });
+    } catch (error) {
+      // Handle error
+      console.error("Registration error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "An error occurred during registration");
+    }
+  };
+  
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 }} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
         <Toolbar className="flex justify-between items-center py-4">
           {/* Logo */}
+          <SignUpModal
+        open={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        onSubmit={handleSignUp}
+      
+      />
           <div className="flex-shrink-0">
             <a href="/" className="flex items-center">
               <span className="text-4xl font-bold bg-gradient-to-r from-pink-700 to-orange-500 text-transparent bg-clip-text">
@@ -184,12 +244,34 @@ export default function Header() {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-6">
-            <a href="/profile" className="text-gray-700 hover:text-gray-900">
-              <div className="flex flex-col items-center">
-                <Person className="h-6 w-6" />
-                <span className="text-xs mt-1">Profile</span>
-              </div>
-            </a>
+          <div className="relative">
+          <a
+            href="/profile"
+            className="text-gray-700 hover:text-gray-900"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <div className="flex flex-col items-center">
+              <Person className="h-6 w-6" />
+              <span className="text-xs mt-1">Profile</span>
+            </div>
+          </a>
+          {hovered && (
+            <div
+              className="absolute right-0 -left-[89px] mt-0 w-50 bg-white shadow-lg rounded-md p-4  z-50 text-center"
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            >
+              <p className="text-gray-700 text-sm font-medium">
+                Welcome to Upick
+              </p>
+              <p className="text-gray-500 text-xs mt-1">
+                Please <a href="/signin" className="text-blue-500 hover:underline">Sign In</a> / 
+                <Button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:underline">Sign Up</Button>
+              </p>
+            </div>
+          )}
+        </div>
             <a href="/wishlist" className="text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
                 <Badge badgeContent={0} color="error">

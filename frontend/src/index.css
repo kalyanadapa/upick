@@ -7,7 +7,29 @@ body {
   color: #fff;
 }
 
-input,
+/* input,
 textarea {
   color: #000;
+} */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px; /* Make the scrollbar narrow */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Light background for the track */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c0c0c0; /* Gray thumb for better visibility */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0; /* Slightly darker on hover */
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin; /* For Firefox, make it thin */
+  scrollbar-color: #c0c0c0 #f0f0f0; /* Thumb and track colors */
 }
