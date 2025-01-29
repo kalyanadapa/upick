@@ -98,6 +98,7 @@
 //     </AppBar>
 //   );
 // }
+import axios from 'axios';
 import { useState } from 'react';
 import { Badge, InputBase,Button, AppBar, Toolbar, Container } from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
@@ -107,8 +108,10 @@ import { useDispatch } from "react-redux";
 import { useRegisterMutation } from "../redux/api/usersApiSlice.js";
 import { setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
+import LoginModal from "./Login.jsx"
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
@@ -133,6 +136,25 @@ export default function Header() {
     avatar: null,
     coverImage: null,
   });
+  const handleLogin = async (formData)=>{
+    console.log("formdata login",formData);
+    const loginData = {
+      password: formData.password,
+    };
+
+    // Dynamically determine whether input is an email or username
+    if (formData.identifier.includes("@")) {
+      loginData.email = formData.identifier; // Email case
+    } else {
+      loginData.username = formData.identifier; // Username case
+    }
+    const response = await axios.post(
+      "http://localhost:8000/api/v1/users/login",
+      loginData,
+      { withCredentials: true } // Ensures cookies are sent
+    );
+    console.log("Login Successful:", response.data);
+  }
   const handleSignUp = async (formData) => {
     try {
       // Creating a FormData object for file uploads
@@ -184,6 +206,7 @@ export default function Header() {
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
         <Toolbar className="flex justify-between items-center py-4">
+          <LoginModal  open={open} handleClose={() => setOpen(false)}  onSubmit={handleLogin}/>
           {/* Logo */}
           <SignUpModal
         open={isModalOpen}
@@ -280,7 +303,7 @@ export default function Header() {
                 Welcome to Upick
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Please <a href="/signin" className="text-blue-500 hover:underline">Sign In</a> / 
+                Please<Button onClick={() => setOpen(true)} className="text-blue-500 hover:underline">Sign In</Button> / 
                 <Button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:underline">Sign Up</Button>
               </p>
             </div>
