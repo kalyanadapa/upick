@@ -12,7 +12,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 
-const LoginModal = ({ open, handleClose,onSubmit }) => {
+const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
   const [formData, setFormData] = useState({ identifier: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -81,8 +81,8 @@ const LoginModal = ({ open, handleClose,onSubmit }) => {
             className="bg-blue-500 text-white hover:bg-blue-600"
             // disabled={isLoading}
           >
-           { "Login"}
-            {/* {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"} */}
+           
+            {isLoad ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
         </form>
       </Box>

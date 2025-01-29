@@ -7,12 +7,13 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AiOutlineUpload } from "react-icons/ai";
 
 // eslint-disable-next-line react/prop-types
-const SignUpModal = ({ open, handleClose, onSubmit }) => {
+const SignUpModal = ({isLoading , open, handleClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -139,7 +140,7 @@ const SignUpModal = ({ open, handleClose, onSubmit }) => {
             fullWidth
             className="bg-blue-500 text-white hover:bg-blue-600"
           >
-            Sign Up
+          {isLoading ? <CircularProgress/>: "Sign Up"}  
           </Button>
         </form>
       </Box>

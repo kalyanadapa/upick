@@ -1,111 +1,12 @@
-// import { useState } from 'react';
-// import { Badge, InputBase, AppBar, Toolbar, Container } from '@mui/material';
-// import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 
-// export default function Header() {
-//   const [searchQuery, setSearchQuery] = useState('');
-
-//   return (
-//     <AppBar position="sticky"  sx={{ backgroundColor: 'white!important', boxShadow: 2, }} className="z-50">
-//       <Container maxWidth="xl" sx={{mx:1,p:0}}>
-//         <Toolbar className="flex justify-between items-center py-4">
-//           {/* Logo */}
-//           <div className="flex-shrink-0">
-//             <a href="/" className="flex items-center">
-//               <span className="text-4xl font-bold bg-gradient-to-r from-pink-700 to-orange-500 text-transparent bg-clip-text">
-//                 Upick
-//               </span>
-//             </a>
-//           </div>
-
-//           {/* Navigation */}
-//           <nav className="hidden md:flex space-x-8">
-//             <a href="/men" className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">MEN</a>
-//             <a href="/women" className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">WOMEN</a>
-//             <a href="/kids" className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">KIDS</a>
-//             <a href="/home-living" className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">HOME & LIVING</a>
-//             <a href="/beauty" className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">BEAUTY</a>
-            
-//           </nav>
-
-//           {/* Search Bar */}
-//           <div className="hidden md:flex flex-1 max-w-lg mx-8">
-//             <div className="w-full flex items-center bg-gray-100 px-3 py-2 rounded-md">
-//               <Search className="text-gray-400 mr-2" />
-//               <InputBase
-//                 placeholder="Search for products, brands and more"
-//                 value={searchQuery}
-//                 onChange={(e) => setSearchQuery(e.target.value)}
-//                 className="w-full text-sm"
-//                 sx={{
-//                   '& .MuiInputBase-input': {
-//                     '&::placeholder': {
-//                       color: '#9CA3AF',
-//                     },
-//                   },
-//                 }}
-//               />
-//             </div>
-//           </div>
-
-//           {/* Right Icons */}
-//           <div className="flex items-center space-x-6">
-//             <a href="/profile" className="text-gray-700 hover:text-gray-900">
-//               <div className="flex flex-col items-center">
-//                 <Person className="h-6 w-6" />
-//                 <span className="text-xs mt-1">Profile</span>
-//               </div>
-//             </a>
-//             <a href="/wishlist" className="text-gray-700 hover:text-gray-900">
-//               <div className="flex flex-col items-center">
-//                 <Badge badgeContent={0} color="error">
-//                   <Favorite className="h-6 w-6" />
-//                 </Badge>
-//                 <span className="text-xs mt-1">Wishlist</span>
-//               </div>
-//             </a>
-//             <a href="/bag" className="text-gray-700 hover:text-gray-900">
-//               <div className="flex flex-col items-center">
-//                 <Badge badgeContent={0} color="error">
-//                   <ShoppingBag className="h-6 w-6" />
-//                 </Badge>
-//                 <span className="text-xs mt-1">Bag</span>
-//               </div>
-//             </a>
-//           </div>
-//         </Toolbar>
-//       </Container>
-
-//       {/* Mobile Search */}
-//       <div className="md:hidden px-4 pb-4">
-//         <div className="w-full flex items-center bg-gray-100 px-3 py-2 rounded-md">
-//           <Search className="text-gray-400 mr-2" />
-//           <InputBase
-//             placeholder="Search for products, brands and more"
-//             value={searchQuery}
-//             onChange={(e) => setSearchQuery(e.target.value)}
-//             className="w-full text-sm"
-//             sx={{
-//               '& .MuiInputBase-input': {
-//                 '&::placeholder': {
-//                   color: '#9CA3AF',
-//                 },
-//               },
-//             }}
-//           />
-//         </div>
-//       </div>
-//     </AppBar>
-//   );
-// }
 import axios from 'axios';
 import { useState } from 'react';
-import { Badge, InputBase,Button, AppBar, Toolbar, Container } from '@mui/material';
+import { Badge, InputBase,Button, AppBar, Toolbar, Container ,Box} from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 import SignUpModal from './SignUp.jsx'
 import { Link } from 'react-router';
-import { useDispatch } from "react-redux";
-import { useRegisterMutation } from "../redux/api/usersApiSlice.js";
+import { useSelector, useDispatch } from "react-redux";
+import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import { setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 import LoginModal from "./Login.jsx"
@@ -116,8 +17,12 @@ export default function Header() {
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.auth);
+  console.log("userinfo",userInfo.data.user);
+  
   // eslint-disable-next-line no-unused-vars
-  const [register, { isLoading }] = useRegisterMutation();
+  const [register, { isLoading:isRegister }] = useRegisterMutation();
+  const [login, { isLoading, isError, error, isSuccess }] = useLoginMutation();
   const categories = {
     men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
     women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
@@ -148,11 +53,13 @@ export default function Header() {
     } else {
       loginData.username = formData.identifier; // Username case
     }
-    const response = await axios.post(
-      "http://localhost:8000/api/v1/users/login",
-      loginData,
-      { withCredentials: true } // Ensures cookies are sent
-    );
+    const response = await login(loginData).unwrap();
+    dispatch(setCredentials({ ...response }));
+    // const response = await axios.post(
+    //   "http://localhost:8000/api/v1/users/login",
+    //   loginData,
+    //   { withCredentials: true } // Ensures cookies are sent
+    // );
     console.log("Login Successful:", response.data);
   }
   const handleSignUp = async (formData) => {
@@ -171,13 +78,6 @@ export default function Header() {
       if (formData.coverImage) {
         form.append("coverImage", formData.coverImage);
       }
-  
-      // Make API call to backend
-      // const response = await axios.post("http://localhost:8000/api/v1/users/register", form, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
       const response = await register(form).unwrap(); // Use unwrap() to get the raw response
       console.log("User registered successfully:", response);
       dispatch(setCredentials({ ...response }));
@@ -206,13 +106,13 @@ export default function Header() {
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
         <Toolbar className="flex justify-between items-center py-4">
-          <LoginModal  open={open} handleClose={() => setOpen(false)}  onSubmit={handleLogin}/>
+          <LoginModal isLoad={isLoading} open={open} handleClose={() => setOpen(false)}  onSubmit={handleLogin}/>
           {/* Logo */}
           <SignUpModal
         open={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
         onSubmit={handleSignUp}
-      
+        isLoading ={isRegister }
       />
           <div className="flex-shrink-0">
           <Link
@@ -282,17 +182,17 @@ export default function Header() {
           {/* Right Icons */}
           <div className="flex items-center space-x-6">
           <div className="relative">
-          <a
-            href="/profile"
-            className="text-gray-700 hover:text-gray-900"
+          <Box
+            onClick={() => setHovered(true)}
+            className="text-gray-700 hover:text-gray-900 "
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
             <div className="flex flex-col items-center">
-              <Person className="h-6 w-6" />
+              <Person className="h-6 w-6"  />
               <span className="text-xs mt-1">Profile</span>
             </div>
-          </a>
+          </Box>
           {hovered && (
             <div
               className="absolute right-0 -left-[89px] mt-0 w-50 bg-white shadow-lg rounded-md p-4  z-50 text-center"

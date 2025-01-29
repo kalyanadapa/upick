@@ -48,7 +48,7 @@
 //     </Container>
 //   );
 // }
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Container, Grid, Card, CardMedia, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,7 +62,28 @@ const categories = [
 
 export default function ProductCategories() {
   const navigate = useNavigate();
-
+  useEffect(()=>{
+    // Function to get current user, including the access token in cookies automatically
+  const getCurrentUser = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/users/current-user', {
+        method: 'GET',
+        credentials: 'include',  // Automatically includes cookies (including accessToken)
+    
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch current user');
+      }
+  
+      const data = await response.json();
+      console.log("currentuser",data);  // Handle the returned user data
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  getCurrentUser()
+  },[])
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
