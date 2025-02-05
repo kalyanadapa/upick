@@ -18,7 +18,8 @@ export default function Header() {
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  console.log("userinfo",userInfo.data.user);
+  const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
+  //console.log("userinfo",isAuthenticated);
   
   // eslint-disable-next-line no-unused-vars
   const [register, { isLoading:isRegister }] = useRegisterMutation();
@@ -55,11 +56,6 @@ export default function Header() {
     }
     const response = await login(loginData).unwrap();
     dispatch(setCredentials({ ...response }));
-    // const response = await axios.post(
-    //   "http://localhost:8000/api/v1/users/login",
-    //   loginData,
-    //   { withCredentials: true } // Ensures cookies are sent
-    // );
     console.log("Login Successful:", response.data);
   }
   const handleSignUp = async (formData) => {
@@ -199,6 +195,10 @@ export default function Header() {
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
             >
+              {isAuthenticated ? (<>
+                <Button  className="text-blue-500 hover:underline">My Account</Button>
+                <Button  className="text-blue-500 hover:underline">Log out</Button>
+              </> ):<>
               <p className="text-gray-700 text-sm font-medium">
                 Welcome to Upick
               </p>
@@ -206,6 +206,8 @@ export default function Header() {
                 Please<Button onClick={() => setOpen(true)} className="text-blue-500 hover:underline">Sign In</Button> / 
                 <Button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:underline">Sign Up</Button>
               </p>
+              </>}
+             
             </div>
           )}
         </div>
