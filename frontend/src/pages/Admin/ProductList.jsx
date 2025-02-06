@@ -256,7 +256,7 @@ const ProductList = () => {
         navigate("/");
       }
     } catch (error) {
-      toast.error("Product creation failed. Try Again.");
+      toast.error(`Product creation failed. Try Again. ${error}`);
     }
   };
 
@@ -275,134 +275,296 @@ const ProductList = () => {
   };
 
   return (
+    // <div className="container xl:mx-[9rem] sm:mx-[0]">
+    //   <div className="flex flex-col md:flex-row">
+    //     <AdminMenu />
+    //     <div className="md:w-3/4 p-3">
+    //       <div className="h-12">Create Product</div>
+    //       <form onSubmit={handleSubmit}>
+    //         {imageUrl && (
+    //           <div className="text-center">
+    //             <img
+    //               src={imageUrl}
+    //               alt="product"
+    //               className="block mx-auto max-h-[200px]"
+    //             />
+    //           </div>
+    //         )}
+
+    //         <div className="mb-3">
+    //           <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
+    //             {image ? image.name : "Upload Image"}
+    //             <input
+    //               type="file"
+    //               name="image"
+    //               accept="image/*"
+    //               onChange={uploadFileHandler}
+    //               className={!image ? "hidden" : "text-white"}
+    //             />
+    //           </label>
+    //         </div>
+
+    //         <div className="p-3">
+    //           <div className="flex flex-wrap">
+    //             <div className="one">
+    //               <label htmlFor="name">Name</label> <br />
+    //               <input
+    //                 type="text"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 value={name}
+    //                 onChange={(e) => setName(e.target.value)}
+    //                 required // Makes the field mandatory
+    //               />
+    //             </div>
+    //             <div className="two ml-10 ">
+    //               <label htmlFor="price">Price</label> <br />
+    //               <input
+    //                 type="number"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 value={price}
+    //                 onChange={(e) => setPrice(e.target.value)}
+    //                 required
+    //               />
+    //             </div>
+    //           </div>
+    //           <div className="flex flex-wrap">
+    //             <div className="one">
+    //               <label htmlFor="quantity">Quantity</label> <br />
+    //               <input
+    //                 type="number"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 value={quantity}
+    //                 onChange={(e) => setQuantity(e.target.value)}
+    //                 required
+    //               />
+    //             </div>
+    //             <div className="two ml-10 ">
+    //               <label htmlFor="brand">Brand</label> <br />
+    //               <input
+    //                 type="text"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 value={brand}
+    //                 onChange={(e) => setBrand(e.target.value)}
+    //               />
+    //             </div>
+    //           </div>
+
+    //           <label htmlFor="" className="my-5">
+    //             Description
+    //           </label>
+    //           <textarea
+    //             type="text"
+    //             className="p-2 mb-3 bg-[#101011] border rounded-lg w-[95%] text-white"
+    //             value={description}
+    //             onChange={(e) => setDescription(e.target.value)}
+    //           ></textarea>
+
+    //           <div className="flex justify-between">
+    //             <div>
+    //               <label htmlFor="stock">Count In Stock</label> <br />
+    //               <input
+    //                 type="number"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 value={stock}
+    //                 onChange={(e) => setStock(e.target.value)}
+    //                 required
+    //               />
+    //             </div>
+
+    //             <div>
+    //               <label htmlFor="">Category</label> <br />
+    //               <select
+    //                 placeholder="Choose Category"
+    //                 className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+    //                 onChange={(e) => setCategory(e.target.value)}
+    //                 value={category} // Bind the category value
+    //                 required
+    //               >
+    //                 <option value="" disabled>
+    //                   Choose Category
+    //                 </option>
+    //                 {categories?.map((c) => (
+    //                   <option key={c._id} value={c._id}>
+    //                     {c.name}
+    //                   </option>
+    //                 ))}
+    //               </select>
+    //             </div>
+    //           </div>
+
+    //           <button
+    //             type="submit"
+    //             className="py-4 px-10 mt-5 rounded-lg text-lg font-bold bg-pink-600"
+    //           >
+    //             Submit
+    //           </button>
+    //         </div>
+    //       </form>
+    //     </div>
+    //   </div>
+    // </div>
     <div className="container xl:mx-[9rem] sm:mx-[0]">
-      <div className="flex flex-col md:flex-row">
-        <AdminMenu />
-        <div className="md:w-3/4 p-3">
-          <div className="h-12">Create Product</div>
-          <form onSubmit={handleSubmit}>
-            {imageUrl && (
-              <div className="text-center">
-                <img
-                  src={imageUrl}
-                  alt="product"
-                  className="block mx-auto max-h-[200px]"
-                />
-              </div>
-            )}
+  <div className="flex flex-col md:flex-row">
+    <AdminMenu />
+    <div className="md:w-3/4 p-3">
+      <div className="h-12 text-white text-2xl font-semibold mb-4">Create Product</div>
+      <form onSubmit={handleSubmit}>
+        {imageUrl && (
+          <div className="text-center mb-4">
+            <img
+              src={imageUrl}
+              alt="product"
+              className="block mx-auto max-h-[200px] w-auto"
+            />
+          </div>
+        )}
 
-            <div className="mb-3">
-              <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
-                {image ? image.name : "Upload Image"}
-                <input
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={uploadFileHandler}
-                  className={!image ? "hidden" : "text-white"}
-                />
-              </label>
-            </div>
-
-            <div className="p-3">
-              <div className="flex flex-wrap">
-                <div className="one">
-                  <label htmlFor="name">Name</label> <br />
-                  <input
-                    type="text"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required // Makes the field mandatory
-                  />
-                </div>
-                <div className="two ml-10 ">
-                  <label htmlFor="price">Price</label> <br />
-                  <input
-                    type="number"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex flex-wrap">
-                <div className="one">
-                  <label htmlFor="quantity">Quantity</label> <br />
-                  <input
-                    type="number"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="two ml-10 ">
-                  <label htmlFor="brand">Brand</label> <br />
-                  <input
-                    type="text"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <label htmlFor="" className="my-5">
-                Description
-              </label>
-              <textarea
-                type="text"
-                className="p-2 mb-3 bg-[#101011] border rounded-lg w-[95%] text-white"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
-
-              <div className="flex justify-between">
-                <div>
-                  <label htmlFor="stock">Count In Stock</label> <br />
-                  <input
-                    type="number"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="">Category</label> <br />
-                  <select
-                    placeholder="Choose Category"
-                    className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
-                    onChange={(e) => setCategory(e.target.value)}
-                    value={category} // Bind the category value
-                    required
-                  >
-                    <option value="" disabled>
-                      Choose Category
-                    </option>
-                    {categories?.map((c) => (
-                      <option key={c._id} value={c._id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="py-4 px-10 mt-5 rounded-lg text-lg font-bold bg-pink-600"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
+        <div className="mb-3">
+          <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
+            {image ? image.name : "Upload Image"}
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={uploadFileHandler}
+              className={!image ? "hidden" : "text-white"}
+            />
+          </label>
         </div>
-      </div>
+
+        <div className="p-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            {/* Category Name */}
+            <div className="flex flex-col">
+              <label htmlFor="name" className="text-white">Name</label>
+              <input
+                type="text"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Price */}
+            <div className="flex flex-col">
+              <label htmlFor="price" className="text-white">Price</label>
+              <input
+                type="number"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            {/* Quantity */}
+            <div className="flex flex-col">
+              <label htmlFor="quantity" className="text-white">Quantity</label>
+              <input
+                type="number"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Brand */}
+            <div className="flex flex-col">
+              <label htmlFor="brand" className="text-white">Brand</label>
+              <input
+                type="text"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="flex flex-col mb-5">
+            <label htmlFor="description" className="text-white">Description</label>
+            <textarea
+              type="text"
+              className="p-2 mb-3 bg-[#101011] border rounded-lg w-full text-white"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            {/* Stock */}
+            <div className="flex flex-col">
+              <label htmlFor="stock" className="text-white">Count In Stock</label>
+              <input
+                type="number"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Category */}
+            <div className="flex flex-col">
+              <label htmlFor="category" className="text-white">Category</label>
+              <select
+                placeholder="Choose Category"
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                onChange={(e) => setCategory(e.target.value)}
+                value={category}
+                required
+              >
+                <option value="" disabled>
+                  Choose Category
+                </option>
+                {categories?.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Subcategory */}
+          {category && (
+            <div className="flex flex-col mb-5">
+              <label htmlFor="subcategory" className="text-white">Subcategory</label>
+              <select
+                className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+                onChange={(e) => setSubcategory(e.target.value)}
+                value={subcategory}
+              >
+                <option value="" disabled>
+                  Choose Subcategory
+                </option>
+                {subcategories?.map((sub) => (
+                  <option key={sub._id} value={sub._id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="py-4 px-10 mt-5 rounded-lg text-lg font-bold bg-pink-600 text-white"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
   );
 };
 

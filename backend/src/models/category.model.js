@@ -12,6 +12,8 @@ const categorySchema = new mongoose.Schema(
     subcategories: [{
       type: String,  // Could be Object if more complex subcategory data is needed
       required: true,
+      trim: true,
+     
     }],
   },
   { timestamps: true }
