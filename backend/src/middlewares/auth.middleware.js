@@ -28,3 +28,11 @@ export const verifyJWT = asyncHandler(async(req, _, next) => {
     }
     
 })
+export const authorizeAdmin = async (req, res, next) => {
+    // Verify if user is authenticated first
+    if (!req.user || !req.user.isAdmin) {
+      return next(new ApiError(403, "Forbidden: Admin access required"));
+    }
+  
+    next();
+  };

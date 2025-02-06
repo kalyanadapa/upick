@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
@@ -92,7 +93,19 @@ const CategoryList = () => {
       toast.error("Category delection failed. Tray again.");
     }
   };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/v1/category");
+        console.log("Categories:", response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error.response?.data || error.message);
+      }
+    };
 
+    fetchCategories();  // Calling the async function
+
+  }, []); 
   return (
     <div className="ml-[10rem] flex flex-col md:flex-row">
       <AdminMenu />

@@ -18,9 +18,11 @@ export default function Header() {
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
+
+  
   const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   //console.log("userinfo",isAuthenticated);
-  
+  console.log("infor",isAuthenticated && userInfo?.data?.user?.isAdmin );
   // eslint-disable-next-line no-unused-vars
   const [register, { isLoading:isRegister }] = useRegisterMutation();
   const [login, { isLoading, isError, error, isSuccess }] = useLoginMutation();
@@ -211,7 +213,14 @@ export default function Header() {
             </div>
           )}
         </div>
-            <a href="/wishlist" className="text-gray-700 hover:text-gray-900">
+        {isAuthenticated && userInfo?.data?.user?.isAdmin ?(<><Link to="/admin/dashboard" className="text-gray-700 hover:text-gray-900">
+              <div className="flex flex-col items-center">
+                <Badge badgeContent={0} color="error">
+                  <ShoppingBag className="h-6 w-6" />
+                </Badge>
+                <span className="text-xs mt-1">Dashboard</span>
+              </div>
+            </Link></>): (<> <a href="/wishlist" className="text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
                 <Badge badgeContent={0} color="error">
                   <Favorite className="h-6 w-6" />
@@ -226,7 +235,8 @@ export default function Header() {
                 </Badge>
                 <span className="text-xs mt-1">Bag</span>
               </div>
-            </a>
+            </a></>)}
+           
           </div>
         </Toolbar>
       </Container>
