@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import cloudinary from 'cloudinary';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.find();  // Fetch all products from the database
@@ -19,37 +20,88 @@ export const getProductById = asyncHandler(async (req, res) => {
 });
 
 // Create a new product (Admin protected)
+// export const createProduct = asyncHandler(async (req, res) => {
+//   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
+
+//   // Validation (ensure required fields are provided)
+//   if (!name || !brand || !category || !price) {
+//     throw new ApiError(400, "All required fields must be provided");  // Use ApiError for validation error
+//   }
+//   let cloudinaryResult = null;
+//   if (req.file) {
+//     cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+//       folder: 'products',  // Optional: specify folder on Cloudinary
+//       resource_type: 'auto' // Automatically detect image/video type
+//     });
+//   }
+//   const newProduct = new Product({
+//     name,
+//     brand,
+//     category,
+//     subcategory,
+//     quantity, 
+//     description,
+//     price,
+//     countInStock,
+//     image: cloudinaryResult ? cloudinaryResult.secure_url : '', 
+//   });
+
+//   await newProduct.save();
+
+//   return res.status(201).json(new ApiResponse(201,newProduct));  // Use ApiResponse for success
+// });
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
 
   // Validation (ensure required fields are provided)
   if (!name || !brand || !category || !price) {
-    throw new ApiError(400, "All required fields must be provided");  // Use ApiError for validation error
+    throw new ApiError(400, "All required fields must be provided");
   }
-  let cloudinaryResult = null;
-  if (req.file) {
-    cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'products',  // Optional: specify folder on Cloudinary
-      resource_type: 'auto' // Automatically detect image/video type
-    });
+
+  // Debug: Log incoming files
+  console.log("Request files: ", req.file);
+
+  const imageLocalPath = req.file?.path;
+
+  // Debug: Log image path
+  console.log("Product Image Path: ", imageLocalPath);
+
+  // Check for image file
+  if (!imageLocalPath) {
+    throw new ApiError(400, "Product image is required");
   }
+
+  // Upload to Cloudinary using your custom upload function
+  let productImageUrl;
+  try {
+    const cloudinaryResult = await uploadOnCloudinary(imageLocalPath); // Use your upload function here
+    if (!cloudinaryResult) {
+      throw new ApiError(400, "Product image upload failed");
+    }
+    productImageUrl = cloudinaryResult.url;  // Save the URL returned by Cloudinary
+  } catch (error) {
+    console.log("Error uploading product image: ", error);
+    throw new ApiError(500, "Product image upload failed");
+  }
+
+  // Create new product
   const newProduct = new Product({
     name,
     brand,
     category,
     subcategory,
-    quantity, 
     description,
     price,
+    quantity,
     countInStock,
-    image: cloudinaryResult ? cloudinaryResult.secure_url : '', 
+    image: productImageUrl,  // Save the Cloudinary URL
   });
 
   await newProduct.save();
 
-  return res.status(201).json(new ApiResponse(201,newProduct));  // Use ApiResponse for success
+  // Return success response with created product
+  return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
 });
-
 // Update a product (Admin protected)
 export const updateProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, countInStock } = req.body;
