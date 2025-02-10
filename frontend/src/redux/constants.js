@@ -8,9 +8,9 @@
 // Set BASE_URL to your backend server
 export const BASE_URL = "http://localhost:8000"; // Change this to your backend URL
 export const USERS_URL = `${BASE_URL}/api/v1/users`;
-export const CATEGORY_URL = `${BASE_URL}/api/category`;
+export const CATEGORY_URL = `${BASE_URL}/api/v1/category`;
 export const PRODUCT_URL = `${BASE_URL}/api/products`;
-export const UPLOAD_URL = `${BASE_URL}/api/upload`;
+export const UPLOAD_URL = `${BASE_URL}/api/v1/upload`;
 export const ORDERS_URL = `${BASE_URL}/api/orders`;
 export const PAYPAL_URL = `${BASE_URL}/api/config/paypal`;
 

@@ -521,7 +521,7 @@ const ProductList = () => {
                 <option value="" disabled>
                   Choose Category
                 </option>
-                {categories?.map((c) => (
+                {categories?.data?.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.name}
                   </option>
