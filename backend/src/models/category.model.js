@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+// Define the subcategory schema
+const subcategorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true } // Optional: Add timestamps if needed
+);
+
+// Define the category schema
 const categorySchema = new mongoose.Schema(
   {
     name: {
@@ -7,18 +20,12 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       required: true,
       maxLength: 32,
-      unique: true,  // ensures no duplicates for categories
+      unique: true, // Ensures no duplicates for categories
     },
-    subcategories: [{
-      type: String,  // Could be Object if more complex subcategory data is needed
-      required: true,
-      trim: true,
-     
-    }],
+    subcategories: [subcategorySchema], // Array of subcategory objects
   },
-  { timestamps: true }
+  { timestamps: true } // Automatically adds createdAt and updatedAt
 );
 
 // Create the Category model
 export default mongoose.model("Category", categorySchema);
-

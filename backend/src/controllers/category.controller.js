@@ -31,11 +31,24 @@ export const createCategory = asyncHandler(async (req, res, next) => {
     return next(new ApiError(400, "Category already exists"));
   }
 
-  const newCategory = new Category({ name, subcategories });
+  // Validate subcategories (ensure each subcategory has a 'name' property)
+  const formattedSubcategories = subcategories.map((sub) => ({
+    name: sub.name.trim(), // Ensure no extra spaces around the name
+  }));
+
+  // Create a new category
+  const newCategory = new Category({ 
+    name, 
+    subcategories: formattedSubcategories 
+  });
+
+  // Save the new category to the database
   await newCategory.save();
 
+  // Return a successful response
   res.status(201).json(new ApiResponse(201, newCategory, "Category created successfully"));
 });
+
 
 // ✅ PATCH: Update a category (Admin only)
 export const updateCategory = asyncHandler(async (req, res, next) => {
