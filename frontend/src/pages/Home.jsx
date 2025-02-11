@@ -42,7 +42,7 @@ const SwiperCarousel = ({ images }) => {
 
 const Home = () => {
   const { keyword } = useParams();
-  const { data, isLoading, isError } = useGetProductsQuery({ keyword });
+  // const { data, isLoading, isError } = useGetProductsQuery({ keyword });
 
   return (
     <>

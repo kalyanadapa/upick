@@ -10,10 +10,11 @@ import {
     updateUserCoverImage, 
     getUserChannelProfile, 
     getWatchHistory, 
-    updateAccountDetails
+    updateAccountDetails,
+    getAllUsers
 } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, authorizeAdmin } from "../middlewares/auth.middleware.js";
 
 
 const router = Router()
@@ -33,7 +34,7 @@ router.route("/register").post(
     )
 
 router.route("/login").post(loginUser)
-
+router.route("/").get(verifyJWT,authorizeAdmin,getAllUsers)
 //secured routes
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)

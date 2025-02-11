@@ -6,6 +6,18 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 
+const getAllUsers = asyncHandler(async (req, res) => {
+    // Fetch all users from the database
+    const users = await User.find().select("-password -refreshToken"); // Exclude sensitive data like password and refreshToken
+
+    if (!users || users.length === 0) {
+        throw new ApiError(404, "No users found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, users, "Users fetched successfully")
+    );
+});
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
@@ -567,5 +579,6 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    getAllUsers
 }
