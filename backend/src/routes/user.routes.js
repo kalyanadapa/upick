@@ -34,7 +34,7 @@ router.route("/register").post(
     )
 
 router.route("/login").post(loginUser)
-router.route("/").get(verifyJWT,authorizeAdmin,getAllUsers)
+router.route("/").get(verifyJWT, authorizeAdmin, getAllUsers)
 //secured routes
 router.route("/logout").post(verifyJWT,  logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)

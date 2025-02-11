@@ -10,10 +10,12 @@ import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlic
 import { setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 import LoginModal from "./Login.jsx"
+import LogOutModal from "./LogOut.jsx"
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDialog, setOpenDialog] = useState(false); 
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
@@ -99,7 +101,12 @@ export default function Header() {
       alert(error.response?.data?.message || "An error occurred during registration");
     }
   };
-  
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+  const handleClose = () => {
+    setOpenDialog(false);
+  }
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
@@ -112,6 +119,7 @@ export default function Header() {
         onSubmit={handleSignUp}
         isLoading ={isRegister }
       />
+      <LogOutModal open={openDialog} handleClose={handleClose}/>
           <div className="flex-shrink-0">
           <Link
         to={"/"}  // Use Link here for navigation
@@ -199,7 +207,7 @@ export default function Header() {
             >
               {isAuthenticated ? (<>
                 <Button  className="text-blue-500 hover:underline">My Account</Button>
-                <Button  className="text-blue-500 hover:underline">Log out</Button>
+                <Button  className="text-blue-500 hover:underline"   onClick={handleClickOpen} >Log out</Button>
               </> ):<>
               <p className="text-gray-700 text-sm font-medium">
                 Welcome to Upick
