@@ -267,12 +267,22 @@ const ProductList = () => {
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    setImages(files);
-    
+    setImages((prevImages) => [...prevImages, ...files]); // Append new files
     const urls = files.map((file) => URL.createObjectURL(file));
-    setImageUrls(urls);
+    setImageUrls((prevUrls) => [...prevUrls, ...urls]); // Append new URLs
   };
-
+  
+  // Function to remove an image
+  const handleRemoveImage = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImageUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
+  };
+  
+  // Function to clear all images
+  const handleClearAllImages = () => {
+    setImages([]);
+    setImageUrls([]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -347,20 +357,31 @@ const ProductList = () => {
           <div className="h-12 text-white text-2xl font-semibold mb-4">Create Product</div>
           <form onSubmit={handleSubmit}>
           {imageUrls.length > 0 && (
-              <div className="flex flex-wrap gap-3 mb-4">
-                {imageUrls.map((url, index) => (
-                  <img key={index} src={url} alt="preview" className="max-h-[100px] w-auto" />
-                ))}
-              </div>
-            )}
+      <div className="flex flex-wrap gap-3 mb-4">
+        {imageUrls.map((url, index) => (
+          <div key={index} className="relative">
+            <img src={url} alt="preview" className="h-[80px] w-[80px] rounded-lg" />
+            <button
+              onClick={() => handleRemoveImage(index)}
+              className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+    )}
             <div className="mb-3">
               <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
-              {images.length > 0 ? `${images.length} images selected` : "Upload Images"}
+              {images.length > 0 ? `${images.length} image${images.length > 1 ? "s" : ""} selected` : "Upload Images"}
+
                 <input
                   type="file"
                   ref={fileInputRef}  // Ref attached to the file input
                   accept="image/*"
+                  multiple
                   onChange={handleFileUpload}
+                  className="hidden"
                   // className={!image ? "hidden" : "text-white"}
                 />
               </label>
