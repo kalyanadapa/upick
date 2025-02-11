@@ -250,7 +250,7 @@ import { useFetchCategoriesQuery } from "../../redux/api/categoryApiSlice";
 import axios from "axios";
 
 const ProductList = () => {
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -259,29 +259,28 @@ const ProductList = () => {
   const [brand, setBrand] = useState("");
   const [stock, setStock] = useState(0);
   const [subcategory, setSubcategory] = useState("");
-  const [imageUrl, setImageUrl] = useState(null); // For image preview
+  const [imageUrls, setImageUrls] = useState([]);
   const fileInputRef = useRef(null); // Ref for the file input
   const navigate = useNavigate();
 
   const { data: categories, error, isLoading } = useFetchCategoriesQuery(); // Use RTK Query hook
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    // Preview image immediately
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImageUrl(imageUrl);
-    }
+    const files = Array.from(e.target.files);
+    setImages(files);
+    
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setImageUrls(urls);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
-    if (!name || !category || !image) {
-      toast.error("Name, Category, and Image are required.");
-      console.log(name,category,image);
+    if (!name || !category  || images.length === 0) {
+      toast.error("Name, Category, and atleast one image are required.");
+      console.log(name,category);
       
       return;
     }
@@ -297,7 +296,9 @@ const ProductList = () => {
       formData.append("brand", brand);
       formData.append("countInStock", stock);
       formData.append("subcategory", subcategory);
-      formData.append("image", image); // Append image file here
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
 
       // Post product data with image to backend
       const productResponse = await axios.post("http://localhost:8000/api/v1/product", formData, {
@@ -317,8 +318,8 @@ const ProductList = () => {
         setBrand("");
         setStock(0);
         setSubcategory("");
-        setImage(null);
-        setImageUrl(null); // Reset the image preview
+        setImages([]);
+        setImageUrls([]);
       } else {
         toast.error("Product creation failed. Try Again.");
       }
@@ -345,25 +346,22 @@ const ProductList = () => {
         <div className="md:w-3/4 p-3">
           <div className="h-12 text-white text-2xl font-semibold mb-4">Create Product</div>
           <form onSubmit={handleSubmit}>
-            {image && (
-              <div className="text-center mb-4">
-                <img
-                  src={imageUrl || URL.createObjectURL(image)}  // Display preview of the selected image
-                  alt="product"
-                  className="block mx-auto max-h-[200px] w-auto"
-                />
+          {imageUrls.length > 0 && (
+              <div className="flex flex-wrap gap-3 mb-4">
+                {imageUrls.map((url, index) => (
+                  <img key={index} src={url} alt="preview" className="max-h-[100px] w-auto" />
+                ))}
               </div>
             )}
-
             <div className="mb-3">
               <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
-                {image ? image.name : "Upload Image"}
+              {images.length > 0 ? `${images.length} images selected` : "Upload Images"}
                 <input
                   type="file"
                   ref={fileInputRef}  // Ref attached to the file input
                   accept="image/*"
                   onChange={handleFileUpload}
-                  className={!image ? "hidden" : "text-white"}
+                  // className={!image ? "hidden" : "text-white"}
                 />
               </label>
             </div>

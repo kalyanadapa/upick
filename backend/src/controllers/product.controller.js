@@ -2,7 +2,6 @@ import Product from "../models/product.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import cloudinary from 'cloudinary';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
@@ -53,34 +52,34 @@ export const getProductById = asyncHandler(async (req, res) => {
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
 
-  // Validation (ensure required fields are provided)
+  // Validation
   if (!name || !brand || !category || !price) {
     throw new ApiError(400, "All required fields must be provided");
   }
 
-  // Debug: Log incoming files
-  console.log("Request files: ", req.file);
-
-  const imageLocalPath = req.file?.path;
-
-  // Debug: Log image path
-  console.log("Product Image Path: ", imageLocalPath);
-
-  // Check for image file
-  if (!imageLocalPath) {
-    throw new ApiError(400, "Product image is required");
+  // Check for uploaded files
+  if (!req.files || req.files.length === 0) {
+    throw new ApiError(400, "At least one product image is required");
   }
 
-  // Upload to Cloudinary using your custom upload function
-  let productImageUrl;
+  console.log("Uploaded Files: ", req.files); // Debug log
+
+  // Upload each image to Cloudinary and store URLs
+  let productImageUrls = [];
+
   try {
-    const cloudinaryResult = await uploadOnCloudinary(imageLocalPath); // Use your upload function here
-    if (!cloudinaryResult) {
+    for (const file of req.files) {
+      const cloudinaryResult = await uploadOnCloudinary(file.path);
+      if (cloudinaryResult) {
+        productImageUrls.push(cloudinaryResult.url);
+      }
+    }
+
+    if (productImageUrls.length === 0) {
       throw new ApiError(400, "Product image upload failed");
     }
-    productImageUrl = cloudinaryResult.url;  // Save the URL returned by Cloudinary
   } catch (error) {
-    console.log("Error uploading product image: ", error);
+    console.error("Error uploading images:", error);
     throw new ApiError(500, "Product image upload failed");
   }
 
@@ -94,14 +93,14 @@ export const createProduct = asyncHandler(async (req, res) => {
     price,
     quantity,
     countInStock,
-    image: productImageUrl,  // Save the Cloudinary URL
+    images: productImageUrls, // Store array of image URLs
   });
 
   await newProduct.save();
 
-  // Return success response with created product
   return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
 });
+
 // Update a product (Admin protected)
 export const updateProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, countInStock } = req.body;

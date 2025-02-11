@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route("/")
   .get(getAllProducts)  // Get all products
-  .post(verifyJWT, authorizeAdmin, upload.single("image"), createProduct);  // Create product (admin only)
+  .post(verifyJWT, authorizeAdmin,  upload.array("images", 5), createProduct);  // Create product (admin only)
 
 router.route("/:id")
   .get(getProductById)  // Get product by ID
