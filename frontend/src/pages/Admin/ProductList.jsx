@@ -493,12 +493,29 @@ const ProductList = () => {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="w-full py-3 bg-blue-500 text-white rounded-lg"
-              >
-                Create Product
-              </button>
+<button
+  type="submit"
+  style={{
+    width: "100%",
+    padding: "12px", // same as py-3
+    background: "linear-gradient(45deg, #ff3ed5d1, #ff9900)", // gradient background
+    color: "white", // text color
+    borderRadius: "8px", // rounded corners
+    fontWeight: "bold", // bold text
+    transition: "0.3s", // transition effect
+  }}
+  onMouseEnter={(e) => {
+    e.target.style.background = "linear-gradient(45deg, #ff9900, #ff6600)"; // hover gradient
+    e.target.style.transform = "scale(1.05)"; // scale on hover
+  }}
+  onMouseLeave={(e) => {
+    e.target.style.background = "linear-gradient(45deg, #ff3ed5d1, #ff9900)"; // reset to normal gradient
+    e.target.style.transform = "scale(1)"; // reset scale
+  }}
+>
+  Create Product
+</button>
+
             </div>
           </form>
         </div>

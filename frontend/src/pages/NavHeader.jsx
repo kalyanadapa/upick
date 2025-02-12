@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 import { useSelector, useDispatch } from "react-redux";
 import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import { setCredentials } from "../redux/features/auth/authSlice";
-import { toast } from "react-toastify";
+import { toast } from 'react-hot-toast';
 import LoginModal from "./Login.jsx"
 import LogOutModal from "./LogOut.jsx"
 export default function Header() {
@@ -59,6 +59,16 @@ export default function Header() {
       loginData.username = formData.identifier; // Username case
     }
     const response = await login(loginData).unwrap();
+    toast.success('User Logged in Successfully!', {
+      duration: 4000,   // Duration of the toast
+      position: 'top-right',  // Position of the toast
+      style: {
+        background: '#333',
+        color: '#fff',
+        fontWeight: 'bold',
+      },
+    });
+    
     dispatch(setCredentials({ ...response }));
     console.log("Login Successful:", response.data);
   }

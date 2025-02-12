@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Route, RouterProvider, createRoutesFromElements } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
-
+import { Toaster } from 'react-hot-toast';
 import PrivateRoute from "./components/PrivateRoute";
 
 // Auth
@@ -72,6 +72,7 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <PayPalScriptProvider>
+    <Toaster /> 
       <RouterProvider router={router} />
     </PayPalScriptProvider>
   </Provider>
