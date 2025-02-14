@@ -1,199 +1,267 @@
-// import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
+import { Button, TextField, Typography, Box, List, ListItem, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox } from "@mui/material";
 
-// const categories = {
-//   men: ['T-Shirts', 'Jeans', 'Jackets', 'Shoes'],
-//   women: ['Dresses', 'Blouses', 'Skirts', 'Boots'],
-//   kids: ['Toys', 'T-Shirts', 'Jeans', 'Sneakers'],
-//   accessories: ['Hats', 'Sunglasses', 'Bags', 'Watches'],
-//   'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
-//   beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
-// };
-
-// const CategoryPage = () => {
-//   const { categoryName } = useParams();
-
-//   // Fetch the category data dynamically (using the dummy data)
-//   const categoryData = categories[categoryName] || []; // Fallback to empty array if category doesn't exist
-
-//   return (
-//     <div>
-//       <h1>{categoryName ? categoryName.charAt(0).toUpperCase() + categoryName.slice(1) : 'Category'}</h1>
-//       <ul>
-//         {categoryData.length > 0 ? (
-//           categoryData.map((item, index) => (
-//             <li key={index}>{item}</li>
-//           ))
-//         ) : (
-//           <li>No items available in this category.</li>
-//         )}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default CategoryPage;
-// import { useParams } from "react-router-dom";
-// import { useState } from "react";
-
-// const categories = {
-//   men: ["T-Shirts", "Jeans", "Jackets", "Shoes"],
-//   women: ["Dresses", "Blouses", "Skirts", "Boots"],
-//   kids: ["Toys", "T-Shirts", "Jeans", "Sneakers"],
-//   accessories: ["Hats", "Sunglasses", "Bags", "Watches"],
-//   "home-living": ["Bedsheets", "Cushions", "Furniture", "Decor"],
-//   beauty: ["Makeup", "Skincare", "Haircare", "Fragrances"],
-// };
-
-// // Dummy Product Data
-// const dummyProducts = [
-//   { id: 1, name: "Men's T-Shirt", subCategory: "T-Shirts", price: 20, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 2, name: "Men's Jeans", subCategory: "Jeans", price: 50, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 3, name: "Men's Jacket", subCategory: "Jackets", price: 80, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 4, name: "Men's Shoes", subCategory: "Shoes", price: 60, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 5, name: "Women's Dress", subCategory: "Dresses", price: 40, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 6, name: "Women's Blouse", subCategory: "Blouses", price: 30, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 7, name: "Kids' T-Shirt", subCategory: "T-Shirts", price: 15, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 8, name: "Kids' Sneakers", subCategory: "Sneakers", price: 35, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 9, name: "Sunglasses", subCategory: "Sunglasses", price: 25, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-//   { id: 10, name: "Watch", subCategory: "Watches", price: 70, image: "https://cdn.urbanstash.in/img/2021/06/urbanstash_category_men_half_sleeve_plain_00.jpg" },
-// ];
-
-// const CategoryPage = () => {
-//   const { categoryName } = useParams();
-//   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-
-//   // Filter products based on category
-//   const categoryProducts = dummyProducts.filter(product => 
-//     categories[categoryName]?.includes(product.subCategory)
-//   );
-
-//   // Filter products based on selected subcategory
-//   const filteredProducts = selectedSubCategory
-//     ? categoryProducts.filter(product => product.subCategory === selectedSubCategory)
-//     : categoryProducts;
-
-//   return (
-//     <div className="container mx-auto p-4">
-//       <h1 className="text-2xl font-bold mb-4 capitalize">{categoryName}</h1>
-
-//       {/* Subcategory Buttons */}
-//       <div className="mb-4 flex gap-2">
-//         <button
-//           onClick={() => setSelectedSubCategory(null)}
-//           className={`px-4 py-2 rounded ${selectedSubCategory === null ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-//         >
-//           All
-//         </button>
-//         {categories[categoryName]?.map(subCategory => (
-//           <button
-//             key={subCategory}
-//             onClick={() => setSelectedSubCategory(subCategory)}
-//             className={`px-4 py-2 rounded ${selectedSubCategory === subCategory ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-//           >
-//             {subCategory}
-//           </button>
-//         ))}
-//       </div>
-
-//       {/* Product List */}
-//       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-//         {filteredProducts.length > 0 ? (
-//           filteredProducts.map(product => (
-//             <div key={product.id} className="border p-4 rounded shadow">
-//               <img src={product.image} alt={product.name} className="w-full h-40 object-cover mb-2 rounded" />
-//               <h3 className="font-semibold">{product.name}</h3>
-//               <p className="text-gray-600">${product.price}</p>
-//               <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded">Add to Cart</button>
-//             </div>
-//           ))
-//         ) : (
-//           <p>No products available in this category.</p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CategoryPage;
-
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-
-const categories = {
-  men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
-  women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
-  kids: ['Toys', 'Clothing', 'Shoes', 'Accessories'],
-  'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
-  beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
-};
-// Dummy Product Data
-const dummyProducts = [
-  { id: 1, name: "Men's T-Shirt", subCategory: "T-Shirts", category: "men", price: 20, image: "https://via.placeholder.com/150" },
-  { id: 2, name: "Men's Jeans", subCategory: "Jeans", category: "men", price: 50, image: "https://via.placeholder.com/150" },
-  { id: 3, name: "Men's Jacket", subCategory: "Jackets", category: "men", price: 80, image: "https://via.placeholder.com/150" },
-  { id: 4, name: "Men's Shoes", subCategory: "Shoes", category: "men", price: 60, image: "https://via.placeholder.com/150" },
-  { id: 5, name: "Women's Dress", subCategory: "Dresses", category: "women", price: 40, image: "https://via.placeholder.com/150" },
-  { id: 6, name: "Women's Blouse", subCategory: "Blouses", category: "women", price: 30, image: "https://via.placeholder.com/150" },
-  { id: 7, name: "Kids' T-Shirt", subCategory: "T-Shirts", category: "kids", price: 15, image: "https://via.placeholder.com/150" },
-  { id: 8, name: "Kids' Sneakers", subCategory: "Sneakers", category: "kids", price: 35, image: "https://via.placeholder.com/150" },
-  { id: 9, name: "Sunglasses", subCategory: "Sunglasses", category: "accessories", price: 25, image: "https://via.placeholder.com/150" },
-  { id: 10, name: "Watch", subCategory: "Watches", category: "accessories", price: 70, image: "https://via.placeholder.com/150" },
-];
+import { useAllProductsQuery } from "../redux/api/productApiSlice";
+import ProductCard from "./Products/ProductCard";
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
-  const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const { data: products, isError } = useAllProductsQuery();
+  const { search } = useLocation();
+  const navigate = useNavigate();
+  const { data: categories, isLoading } = useFetchCategoriesQuery();
 
-  // Get only the subcategories belonging to the selected category
-  const availableSubCategories = categories[categoryName] || [];
+  // State for selected category
+  const [selectedCategory, setSelectedCategory] = useState(categoryName || "");
+  // State for selected subcategories
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  // State for price filter
+  const [priceFilter, setPriceFilter] = useState("");
 
-  // Filter products based on category
-  const categoryProducts = dummyProducts.filter(product => product.category === categoryName);
+  // Get subcategory ID from query params
+  const queryParams = new URLSearchParams(search);
+  const subCategoryId = queryParams.get("sub_category");
 
-  // Filter products based on selected subcategory
-  const filteredProducts = selectedSubCategory
-    ? categoryProducts.filter(product => product.subCategory === selectedSubCategory)
-    : categoryProducts;
+  useEffect(() => {
+    if (subCategoryId) {
+      setSelectedSubCategories([subCategoryId]); // Pre-select subcategory from URL
+    }
+  }, [subCategoryId]);
+
+  // Find the selected category in the API data
+  const selectedCategoryData = categories?.data?.find((cat) => cat.name.toLowerCase() === selectedCategory.toLowerCase());
+
+  // Get subcategories of the selected category
+  const availableSubCategories = selectedCategoryData ? selectedCategoryData.subcategories : [];
+
+  // Handle category selection
+  const handleCategoryChange = (event) => {
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory);
+    setSelectedSubCategories([]); // Reset subcategories when category changes
+    navigate(`/category/${newCategory.toLowerCase()}`);
+  };
+
+  // Handle subcategory selection
+  const handleSubCategoryChange = (event) => {
+    const subCategoryId = event.target.value;
+    setSelectedSubCategories((prevSelected) =>
+      event.target.checked ? [...prevSelected, subCategoryId] : prevSelected.filter((id) => id !== subCategoryId)
+    );
+  };
+
+  // Log selections to the console
+  useEffect(() => {
+    console.log("Selected Category:", selectedCategory);
+    console.log("Selected Subcategories:", selectedSubCategories);
+  }, [selectedCategory, selectedSubCategories]);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 capitalize">{categoryName}</h1>
+//     <Box className="container mx-auto p-6">
+//       <Box className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//         {/* Left Side: Filters */}
+//         <Box>
+//           {/* Category Selection (Radio Buttons) */}
+//           <Typography variant="h6" gutterBottom>Categories</Typography>
+//           <FormControl component="fieldset">
+//   <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
+//     {categories?.data?.map((category) => (
+//       <FormControlLabel
+//         key={category.id}
+//         value={category.name}
+//         control={
+//           <Radio
+//             sx={{
+//               '&.Mui-checked': {
+//                 color: 'rgb(227 45 146)!important',
+//               },
+//               '&.MuiRadio-root': {
+//                 color: 'white', // White color when not checked
+//               }
+//             }}
+//           />
+//         }
+//         label={category.name}
+//         className="cursor-pointer"
+//       />
+//     ))}
+//   </RadioGroup>
+// </FormControl>
 
-      {/* Subcategory Buttons */}
-      <div className="mb-4 flex gap-2">
-        <button
-          onClick={() => setSelectedSubCategory(null)}
-          className={`px-4 py-2 rounded ${selectedSubCategory === null ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          All
-        </button>
-        {availableSubCategories.map(subCategory => (
-          <button
-            key={subCategory}
-            onClick={() => setSelectedSubCategory(subCategory)}
-            className={`px-4 py-2 rounded ${selectedSubCategory === subCategory ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-          >
-            {subCategory}
-          </button>
+
+//           {/* Subcategory Selection (Checkboxes) */}
+//           <Typography variant="h6" gutterBottom>Subcategories</Typography>
+//           <FormControl component="fieldset">
+//   {availableSubCategories.length > 0 ? (
+//     availableSubCategories.map((subcategory) => (
+//       <FormControlLabel
+//         key={subcategory._id}
+//         control={
+//           <Checkbox
+//             checked={selectedSubCategories.includes(subcategory._id)}
+//             onChange={handleSubCategoryChange}
+//             value={subcategory._id}
+//             sx={{
+//               '&.Mui-checked': {
+//                 color: 'rgb(227 45 146)!important', // Pink color when checked
+//               },
+//               '&.MuiCheckbox-root': {
+//                 color: 'white', // White color when not checked
+//               }
+//             }}
+//           />
+//         }
+//         label={subcategory.name}
+//       />
+//     ))
+//   ) : (
+//     <Typography variant="body2" color="textSecondary">No subcategories available</Typography>
+//   )}
+// </FormControl>
+
+//           {/* Price filter */}
+//           <Typography variant="h6" gutterBottom>Filter by Price</Typography>
+//           <TextField
+//             variant="outlined"
+//             type="number"
+//             label="Max Price"
+//             fullWidth
+//             value={priceFilter}
+//             onChange={(e) => setPriceFilter(e.target.value)}
+//             className="mb-4"
+//           />
+
+//           {/* Reset Filters */}
+//           <Button
+//             variant="contained"
+//             color="secondary"
+//             onClick={() => {
+//               setSelectedCategory("");
+//               setSelectedSubCategories([]);
+//               setPriceFilter("");
+//               navigate("/category");
+//             }}
+//           >
+//             Reset Filters
+//           </Button>
+//         </Box>
+
+//         {/* Right Side: Products */}
+//         <Box className="col-span-2">
+//           <Typography variant="h4" gutterBottom>{selectedCategoryData?.name || "All Categories"} Category</Typography>
+
+//           {isLoading ? (
+//             <Typography>Loading...</Typography>
+//           ) : (
+//             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+//               {products?.data?.length > 0 ? (
+//                 products?.data?.map((product) => <ProductCard key={product._id} product={product} />)
+//               ) : (
+//                 <p className="text-center col-span-full text-gray-500">No products available</p>
+//               )}
+//             </div>
+//           )}
+//         </Box>
+//       </Box>
+//     </Box>
+<Box sx={{ display: 'flex' , p:3}}>
+  {/* Left Side: Filters */}
+  <Box sx={{
+    position: 'sticky',
+    top: 85,
+    width: '300px',
+    maxHeight: '100vh', // Keeps the left side fixed at 100vh height
+    overflowY: 'auto',  // Allow scrolling if needed within the filter section
+    paddingRight: 2,
+  }}>
+    {/* Category Selection (Radio Buttons) */}
+    <Typography variant="h6" gutterBottom>Categories</Typography>
+    <FormControl component="fieldset">
+      <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
+        {categories?.data?.map((category) => (
+          <FormControlLabel
+            key={category.id}
+            value={category.name}
+            control={<Radio sx={{ '&.Mui-checked': { color: 'rgb(227 45 146)!important' }, '&.MuiRadio-root': { color: 'white' } }} />}
+            label={category.name}
+            className="cursor-pointer"
+          />
         ))}
-      </div>
+      </RadioGroup>
+    </FormControl>
 
-      {/* Product List */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map(product => (
-            <div key={product.id} className="border p-4 rounded shadow">
-              <img src={product.image} alt={product.name} className="w-full h-40 object-cover mb-2 rounded" />
-              <h3 className="font-semibold">{product.name}</h3>
-              <p className="text-gray-600">${product.price}</p>
-              <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded">Add to Cart</button>
-            </div>
-          ))
+    {/* Subcategory Selection (Checkboxes) */}
+    <Typography variant="h6" gutterBottom>Subcategories</Typography>
+    <FormControl component="fieldset">
+      {availableSubCategories.length > 0 ? (
+        availableSubCategories.map((subcategory) => (
+          <FormControlLabel
+            key={subcategory._id}
+            control={<Checkbox checked={selectedSubCategories.includes(subcategory._id)} onChange={handleSubCategoryChange} value={subcategory._id} sx={{ '&.Mui-checked': { color: 'rgb(227 45 146)!important' }, '&.MuiCheckbox-root': { color: 'white' } }} />}
+            label={subcategory.name}
+          />
+        ))
+      ) : (
+        <Typography variant="body2" color="textSecondary">No subcategories available</Typography>
+      )}
+    </FormControl>
+
+    {/* Price filter */}
+    <Typography variant="h6" gutterBottom>Filter by Price</Typography>
+    <TextField
+      variant="outlined"
+      type="number"
+      label="Max Price"
+      fullWidth
+      value={priceFilter}
+      onChange={(e) => setPriceFilter(e.target.value)}
+      className="mb-4"
+    />
+
+    {/* Reset Filters */}
+    <Button
+      variant="contained"
+      color="secondary"
+      onClick={() => {
+        setSelectedCategory("");
+        setSelectedSubCategories([]);
+        setPriceFilter("");
+        navigate("/category");
+      }}
+    >
+      Reset Filters
+    </Button>
+  </Box>
+
+  {/* Right Side: Products */}
+  <Box sx={{
+    flex: 1, // Takes remaining space
+    overflowY: 'auto', // Only this section will scroll when content exceeds
+    paddingLeft: 4,
+    display: 'flex',
+    flexDirection: 'column',
+  }}>
+    <Typography variant="h4" gutterBottom>{selectedCategoryData?.name || "All Categories"} Category</Typography>
+
+    {isLoading ? (
+      <Typography>Loading...</Typography>
+    ) : (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">
+        {products?.data?.length > 0 ? (
+          products?.data?.map((product) => <ProductCard key={product._id} product={product} />)
         ) : (
-          <p>No products available in this category.</p>
+          <p className="text-center col-span-full text-gray-500">No products available</p>
         )}
       </div>
-    </div>
+    )}
+  </Box>
+</Box>
+
+
+
+
   );
 };
 

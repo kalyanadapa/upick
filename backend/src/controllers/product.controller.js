@@ -5,9 +5,43 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find();  // Fetch all products from the database
-  return res.status(200).json(new ApiResponse(201,products, "All Products fetched"));  // Use ApiResponse for success
+  const products = await Product.find()
+    .populate({
+      path: "category", // Populate the category field
+      select: "_id name subcategories", // Select category and subcategories
+    });
+
+  // For each product, manually set the subcategory based on the saved subcategory ID
+  const result = products.map(product => {
+    // Check if the category and its subcategories exist
+    if (product.category && product.category.subcategories) {
+      // Find the subcategory from the category's subcategories array
+      const subcategory = product.category.subcategories.find(sub => 
+        sub._id.toString() === product.subcategory.toString()
+      );
+      
+      // Include only the selected subcategory, not the whole subcategories list
+      return {
+        ...product.toObject(),
+        category: {
+          _id: product.category._id,
+          name: product.category.name,
+        },
+        subcategory: subcategory ? { _id: subcategory._id, name: subcategory.name } : null
+      };
+    }
+
+    // If no subcategories exist, return the product without subcategory info
+    return {
+      ...product.toObject(),
+      category: product.category ? { _id: product.category._id, name: product.category.name } : null,
+      subcategory: null
+    };
+  });
+
+  return res.status(200).json(new ApiResponse(200, result, "All Products fetched Successfully"));
 });
+
 
 // Get a product by ID
 export const getProductById = asyncHandler(async (req, res) => {
