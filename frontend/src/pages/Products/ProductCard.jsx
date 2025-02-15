@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useDispatch } from "react-redux";
@@ -6,6 +7,7 @@ import { toast } from "react-toastify";
 import HeartIcon from "./HeartIcon";
 
 const ProductCard = ({ product }) => {
+  console.log("product",product)
   const dispatch = useDispatch();
 
   const addToCartHandler = (product, qty) => {
@@ -37,7 +39,17 @@ const ProductCard = ({ product }) => {
       {/* Product Details */}
       <div className="p-5">
         <div className="flex justify-between">
-          <h5 className="mb-2 text-xl text-white dark:text-white">{product?.name}</h5>
+        <h5 
+  className="mb-2 text-xl text-white dark:text-white"
+  style={{
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  }}
+>
+  {product?.name}
+</h5>
+
           <p className="text-black font-semibold text-pink-500">
             {product?.price?.toLocaleString("en-US", {
               style: "currency",

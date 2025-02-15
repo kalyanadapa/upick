@@ -1,4 +1,5 @@
 import Product from "../models/product.model.js";
+import Category from "../models/category.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -42,6 +43,74 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, result, "All Products fetched Successfully"));
 });
 
+export const getAllProductsByCategory = asyncHandler(async (req, res) => {
+  const { category, subcategories } = req.query;  // Get category and subcategory (or subcategories) from query params
+
+  let query = {};
+
+  // Case 1: If category is provided, filter by category
+  if (category) {
+    query.category = category;  // Filter by category ID
+  }
+
+  // Case 2: If subcategories are provided (either one or multiple), filter by subcategory
+  if (subcategories) {
+    const subcategoryIds = Array.isArray(subcategories) ? subcategories : [subcategories];
+    
+    // If category is provided, ensure subcategories are part of the category's subcategories
+    if (category) {
+      // Find the category first and get its subcategories directly (no need to populate)
+      const parentCategory = await Category.findById(category);
+      if (!parentCategory) {
+        return res.status(404).json(new ApiError(404, "Category not found"));
+      }
+
+      // Ensure the provided subcategories belong to this category
+      const validSubcategoryIds = parentCategory.subcategories.map(sub => sub._id.toString()); // Convert to string for comparison
+      const invalidSubcategories = subcategoryIds.filter(id => !validSubcategoryIds.includes(id));
+
+      if (invalidSubcategories.length > 0) {
+        return res.status(400).json(new ApiError(400, `Some subcategories are not related to the provided category: ${invalidSubcategories}`));
+      }
+
+      // Filter products that belong to the specified subcategories
+      query.subcategory = { $in: subcategoryIds }; 
+    } else {
+      return res.status(400).json(new ApiError(400, "Category must be provided to filter by subcategories"));
+    }
+  }
+
+  // Fetch products based on the constructed query
+  const products = await Product.find(query)
+    .populate({
+      path: "category", // Populate the category field
+      select: "_id name subcategories", // Select category and subcategories
+    });
+
+  // For each product, manually set the subcategory based on the saved subcategory ID
+  const result = products.map(product => {
+    if (product.category && product.category.subcategories) {
+      const subcategory = product.category.subcategories.find(sub => sub._id.toString() === product.subcategory.toString());
+      return {
+        ...product.toObject(),
+        category: {
+          _id: product.category._id,
+          name: product.category.name,
+        },
+        subcategory: subcategory ? { _id: subcategory._id, name: subcategory.name } : null
+      };
+    }
+
+    // If no subcategories exist, return the product without subcategory info
+    return {
+      ...product.toObject(),
+      category: product.category ? { _id: product.category._id, name: product.category.name } : null,
+      subcategory: null
+    };
+  });
+
+  return res.status(200).json(new ApiResponse(200, result, "Products fetched successfully"));
+});
 
 // Get a product by ID
 export const getProductById = asyncHandler(async (req, res) => {
