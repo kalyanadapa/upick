@@ -11,14 +11,23 @@ export const productApiSlice = apiSlice.injectEndpoints({
     //   keepUnusedDataFor: 5,
     //   providesTags: ["Products"],
     // }),
-
+    
     // getProductById: builder.query({
     //   query: (productId) => `${PRODUCT_URL}/${productId}`,
     //   providesTags: (result, error, productId) => [
     //     { type: "Product", id: productId },
     //   ],
     // }),
-
+    getProductsByCategory : builder.query({
+      query: ({ categoryId, subCategoryIds }) => ({
+        url: `${PRODUCT_URL}/all_products`,
+        params: {
+          category: categoryId,
+          subcategories: subCategoryIds.length > 0 ? subCategoryIds.join(",") : undefined, // Convert array to comma-separated string
+        },
+      }),
+      providesTags: ["Products"],
+    }),
     allProducts: builder.query({
       query: () => `${PRODUCT_URL}`,
     }),
@@ -95,6 +104,7 @@ export const {
   useGetProductByIdQuery,
   useGetProductsQuery,
   useGetProductDetailsQuery,
+  useGetProductsByCategoryQuery,
   useAllProductsQuery,
   useCreateProductMutation,
   useUpdateProductMutation,

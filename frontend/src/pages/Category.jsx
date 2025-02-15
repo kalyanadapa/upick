@@ -1,14 +1,13 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
-import { Button, TextField, Typography, Box, List, ListItem, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox } from "@mui/material";
-import axios from "axios";
-import { useAllProductsQuery } from "../redux/api/productApiSlice";
+import { Button, TextField, Typography, Box, List, ListItem, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, CircularProgress } from "@mui/material";
+import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
-  const { data: products, isError } = useAllProductsQuery();
+  // const { data: products, isError } = useAllProductsQuery();
   const { search } = useLocation();
   const navigate = useNavigate();
   const { data: categories, isLoading } = useFetchCategoriesQuery();
@@ -17,7 +16,7 @@ const CategoryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCat, setSelectedCat] = useState({})
   useEffect(() => {
-    if (categoryName) {
+    if (categoryName&& categories?.data) {
       // Check if the category exists in the fetched categories
       const category = categories?.data?.find(cat => cat.name.toLowerCase() === categoryName.toLowerCase());
        console.log("cagi",category);
@@ -32,6 +31,7 @@ const CategoryPage = () => {
       }
     }
   }, [categories, categoryName]);
+
   // State for selected subcategories
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   // State for price filter
@@ -46,40 +46,40 @@ const CategoryPage = () => {
       setSelectedSubCategories([subCategoryId]); // Pre-select subcategory from URL
     }
   }, [subCategoryId]);
-
+  const { data: products, isError, isFetching,refetch } = useGetProductsByCategoryQuery(
+    { categoryId: selectedCat._id, subCategoryIds: selectedSubCategories }, 
+    { skip: !selectedCat._id }
+  );
+useEffect(() => {
+  if (selectedCat._id) {
+    refetch();
+  }
+}, [selectedCat, refetch]);
   // Find the selected category in the API data
   const selectedCategoryData = categories?.data?.find((cat) => cat.name.toLowerCase() === selectedCategory.toLowerCase());
 console.log("selected",selectedCategory);
-useEffect(() => {
-  const getAll = async () => {
-    try {
-      // Start loading
-      
+// useEffect(() => {
+//   const getAll = async () => {
+//     try {
+//       const categoryId = selectedCat._id; // or get it from state, depending on how your app is structured
 
-      // Assuming categoryName is the category ID, but if you need to fetch a category ID based on categoryName, 
-      // you can adjust the logic accordingly.
-      const categoryId = selectedCat._id; // or get it from state, depending on how your app is structured
+//       // Make the API call with categoryId
+//       const response = await axios.get(`http://localhost:8000/api/v1/product/all_products?category=${categoryId}`);
+// console.log("resp",response);
 
-      // Make the API call with categoryId
-      const response = await axios.get(`http://localhost:8000/api/v1/product/all_products?category=${categoryId}`);
-console.log("resp",response);
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//     }
+//   };
 
-      // Handle the response and set the products
-      // Assuming 'products' is the key in the response data
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  // Call the function only if categoryName is available (if categoryName exists)
-  if (categoryName) {
-    getAll();
-  }
-}, [selectedCat])
+//   if (categoryName) {
+//     getAll();
+//   }
+// }, [selectedCat])
   // Get subcategories of the selected category
   const availableSubCategories = selectedCategoryData ? selectedCategoryData.subcategories : [];
-
-  // Handle category selection
+ 
+  
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
@@ -99,8 +99,27 @@ console.log("resp",response);
 
 
   return (
-<Box sx={{ display: 'flex' , p:3,}}>
+<Box sx={{ display: 'flex' , p:3, position:'relative'}}>
   {/* Left Side: Filters */}
+  {(isLoading || isFetching) && (
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay
+          backdropFilter: "blur(5px)", // Blur effect
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999, // Ensure it's on top
+        }}
+      >
+        <CircularProgress sx={{ color: "white" }} />
+      </Box>
+    )}
   <Box sx={{
   position: 'sticky',
   top: 85,
@@ -188,9 +207,11 @@ console.log("resp",response);
   }}>
     <Typography variant="h4" gutterBottom>{selectedCategoryData?.name || "All Categories"} Category</Typography>
 
-    {isLoading ? (
-      <Typography>Loading...</Typography>
-    ) : (
+    {isFetching ? (
+        <Typography>Loading products...</Typography>
+      ) : isError ? (
+        <Typography>Error fetching products.</Typography>
+      ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">
         {products?.data?.length > 0 ? (
           products?.data?.map((product) => <ProductCard key={product._id} product={product} />)
