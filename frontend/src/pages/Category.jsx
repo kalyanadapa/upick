@@ -61,7 +61,7 @@ useEffect(() => {
       const categoryId = selectedCat._id; // or get it from state, depending on how your app is structured
 
       // Make the API call with categoryId
-      const response = await axios.get(`http://localhost:8000/api/v1/product/all_products?category_id=${categoryId}`);
+      const response = await axios.get(`http://localhost:8000/api/v1/product/all_products?category=${categoryId}`);
 console.log("resp",response);
 
       // Handle the response and set the products

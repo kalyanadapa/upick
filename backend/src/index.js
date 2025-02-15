@@ -15,12 +15,55 @@ connectDB()
 .then(() => {
     app.listen(process.env.PORT || 8000, () => {
         // generateAndInsertProducts();
+        //updateSubcategoryNames();
         console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
     })
 })
 .catch((err) => {
     console.log("MONGO db connection failed !!! ", err);
 })
+
+
+
+// const updateSubcategoryNames = asyncHandler(async () => {
+//   // 1️⃣ Find all products where subcategory only has an _id and no name
+//   const productsToUpdate = await Product.find({
+//     "subcategory.name": { $exists: false }, // Only fetch products where subcategory name is missing
+//   });
+
+//   // 2️⃣ Iterate over the products to update the subcategory with the name
+//   for (let product of productsToUpdate) {
+//     const subcategoryId = product.subcategory._id;
+
+//     // 3️⃣ Fetch the category that contains the subcategory
+//     const category = await Category.findOne({ "subcategories._id": subcategoryId });
+//     if (!category) {
+//       console.log(`Category not found for subcategory: ${subcategoryId}`);
+//       continue; // Skip if no category found
+//     }
+
+//     // 4️⃣ Find the subcategory inside the category's subcategories
+//     const subcategory = category.subcategories.find(sub => sub._id.toString() === subcategoryId.toString());
+
+//     if (subcategory) {
+//       // 5️⃣ Update the product with both the _id and name of the subcategory
+//       product.subcategory = {
+//         _id: subcategory._id,
+//         name: subcategory.name,
+//       };
+
+//       // Save the updated product
+//       await product.save();
+//       console.log(`Updated product with id: ${product._id} - Subcategory: ${subcategory.name}`);
+//     }
+//   }
+
+//   return "Subcategories updated successfully!";
+// });
+
+// Run the script
+
+
 
 // const generateProduct = (categoryId, subcategoryId) => {
 //     return {

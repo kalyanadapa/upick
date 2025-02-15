@@ -9,39 +9,25 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.find()
     .populate({
       path: "category", // Populate the category field
-      select: "_id name subcategories", // Select category and subcategories
+      select: "_id name", // Select category name and _id only
     });
 
-  // For each product, manually set the subcategory based on the saved subcategory ID
+  // No need to look up subcategories since it's already included in the product
   const result = products.map(product => {
-    // Check if the category and its subcategories exist
-    if (product.category && product.category.subcategories) {
-      // Find the subcategory from the category's subcategories array
-      const subcategory = product.category.subcategories.find(sub => 
-        sub._id.toString() === product.subcategory.toString()
-      );
-      
-      // Include only the selected subcategory, not the whole subcategories list
-      return {
-        ...product.toObject(),
-        category: {
-          _id: product.category._id,
-          name: product.category.name,
-        },
-        subcategory: subcategory ? { _id: subcategory._id, name: subcategory.name } : null
-      };
-    }
-
-    // If no subcategories exist, return the product without subcategory info
     return {
       ...product.toObject(),
-      category: product.category ? { _id: product.category._id, name: product.category.name } : null,
-      subcategory: null
+      category: {
+        _id: product.category._id,
+        name: product.category.name,
+      },
+      // Directly use the subcategory from the product itself
+      subcategory: product.subcategory ? { _id: product.subcategory._id, name: product.subcategory.name } : null,
     };
   });
 
   return res.status(200).json(new ApiResponse(200, result, "All Products fetched Successfully"));
 });
+
 
 export const getAllProductsByCategory = asyncHandler(async (req, res) => {
   const { category, subcategories } = req.query;  // Get category and subcategory (or subcategories) from query params
@@ -56,7 +42,7 @@ export const getAllProductsByCategory = asyncHandler(async (req, res) => {
   // Case 2: If subcategories are provided (either one or multiple), filter by subcategory
   if (subcategories) {
     const subcategoryIds = Array.isArray(subcategories) ? subcategories : [subcategories];
-    
+
     // If category is provided, ensure subcategories are part of the category's subcategories
     if (category) {
       // Find the category first and get its subcategories directly (no need to populate)
@@ -90,7 +76,8 @@ export const getAllProductsByCategory = asyncHandler(async (req, res) => {
   // For each product, manually set the subcategory based on the saved subcategory ID
   const result = products.map(product => {
     if (product.category && product.category.subcategories) {
-      const subcategory = product.category.subcategories.find(sub => sub._id.toString() === product.subcategory.toString());
+      // Find the subcategory from the category's subcategories array
+      const subcategory = product.category.subcategories.find(sub => sub._id.toString() === product.subcategory._id.toString());
       return {
         ...product.toObject(),
         category: {
@@ -112,6 +99,7 @@ export const getAllProductsByCategory = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, result, "Products fetched successfully"));
 });
 
+
 // Get a product by ID
 export const getProductById = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);  // Find product by ID
@@ -121,59 +109,112 @@ export const getProductById = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiResponse.success(product));  // Use ApiResponse for success
 });
 
+// export const createProduct = asyncHandler(async (req, res) => {
+//   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
+
+//   // Validation
+//   if (!name || !brand || !category || !price) {
+//     throw new ApiError(400, "All required fields must be provided");
+//   }
+
+//   // Check for uploaded files
+//   if (!req.files || req.files.length === 0) {
+//     throw new ApiError(400, "At least one product image is required");
+//   }
+
+//   console.log("Uploaded Files: ", req.files); // Debug log
+
+//   // Upload each image to Cloudinary and store URLs
+//   let productImageUrls = [];
+
+//   try {
+//     for (const file of req.files) {
+//       const cloudinaryResult = await uploadOnCloudinary(file.path);
+//       if (cloudinaryResult) {
+//         productImageUrls.push(cloudinaryResult.url);
+//       }
+//     }
+
+//     if (productImageUrls.length === 0) {
+//       throw new ApiError(400, "Product image upload failed");
+//     }
+//   } catch (error) {
+//     console.error("Error uploading images:", error);
+//     throw new ApiError(500, "Product image upload failed");
+//   }
+
+//   // Create new product
+//   const newProduct = new Product({
+//     name,
+//     brand,
+//     category,
+//     subcategory,
+//     description,
+//     price,
+//     quantity,
+//     countInStock,
+//     images: productImageUrls, // Store array of image URLs
+//   });
+
+//   await newProduct.save();
+
+//   return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
+// });
+
+// Update a product (Admin protected)
+
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
 
-  // Validation
-  if (!name || !brand || !category || !price) {
+  // 1️⃣ Validate Required Fields
+  if (!name || !brand || !category || !subcategory || !price) {
     throw new ApiError(400, "All required fields must be provided");
   }
 
-  // Check for uploaded files
-  if (!req.files || req.files.length === 0) {
-    throw new ApiError(400, "At least one product image is required");
+  // 2️⃣ Check if category exists
+  const categoryData = await Category.findById(category);
+  if (!categoryData) {
+    throw new ApiError(404, "Category not found");
   }
 
-  console.log("Uploaded Files: ", req.files); // Debug log
+  // 3️⃣ Find subcategory inside the category's subcategories array
+  const subcategoryData = categoryData.subcategories.find(sub => sub._id.toString() === subcategory);
+  if (!subcategoryData) {
+    throw new ApiError(404, "Subcategory not found in the selected category");
+  }
 
-  // Upload each image to Cloudinary and store URLs
+  // 4️⃣ Upload product images to Cloudinary (if files exist)
   let productImageUrls = [];
-
-  try {
-    for (const file of req.files) {
+  if (req.files?.length > 0) {
+    const uploadPromises = req.files.map(async (file) => {
       const cloudinaryResult = await uploadOnCloudinary(file.path);
-      if (cloudinaryResult) {
-        productImageUrls.push(cloudinaryResult.url);
-      }
-    }
+      return cloudinaryResult?.url;
+    });
 
-    if (productImageUrls.length === 0) {
-      throw new ApiError(400, "Product image upload failed");
-    }
-  } catch (error) {
-    console.error("Error uploading images:", error);
-    throw new ApiError(500, "Product image upload failed");
+    productImageUrls = (await Promise.all(uploadPromises)).filter(url => url); // Remove undefined values
   }
 
-  // Create new product
+  // 5️⃣ Create new product with subcategory (_id + name)
   const newProduct = new Product({
     name,
     brand,
-    category,
-    subcategory,
+    category, // Stores only the category ID
+    subcategory: {
+      _id: subcategoryData._id,
+      name: subcategoryData.name, // Store subcategory name dynamically
+    },
     description,
     price,
     quantity,
     countInStock,
-    images: productImageUrls, // Store array of image URLs
+    images: productImageUrls,
   });
 
+  // 6️⃣ Save product
   await newProduct.save();
-
   return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
 });
 
-// Update a product (Admin protected)
 export const updateProduct = asyncHandler(async (req, res) => {
   const { name, brand, category, subcategory, description, price, countInStock } = req.body;
 
