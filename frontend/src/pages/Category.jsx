@@ -96,8 +96,9 @@ console.log("selected",selectedCategory);
   };
 
   // Log selections to the console
-
-
+ useEffect(()=>{
+  console.log("selected subcategories",selectedSubCategories)
+ },[selectedSubCategories])
   return (
 <Box sx={{ display: 'flex' , p:3, position:'relative'}}>
   {/* Left Side: Filters */}
