@@ -53,11 +53,11 @@ import { Container, Grid, Card, CardMedia, CardContent, Typography } from '@mui/
 import { useNavigate } from 'react-router-dom';
 
 const categories = [
-  { name: 'Men', image: 'https://img.freepik.com/free-photo/photo-attractive-smiling-man-with-trendy-hairstyle-positive-look-dressed-fashionable-festive-outfit-stands-against-pink-wall_273609-23540.jpg?semt=ais_hybrid', link: '/men' },
-  { name: 'Women', image: 'https://jeffersonspeedway.com/wp-content/uploads/2014/01/womens-category.jpg', link: '/women' },
-  { name: 'Kids', image: 'https://img3.exportersindia.com/product_images/bc-full/dir_31/918678/kids-wear-1307344.jpg', link: '/kids' },
-  { name: 'Home & Living', image: 'https://i.etsystatic.com/inv/412c11/2821733010/inv_fullxfull.2821733010_17r3408a.jpg?version=0', link: '/home-living' },
-  { name: 'Beauty', image: 'https://media.istockphoto.com/id/1414801672/photo/cardboard-box-with-cosmetics-product-in-front-od-open-door-buying-online-and-delivery.jpg?s=612x612&w=0&k=20&c=SA9VCzp-QtpzlliX8dM_uoH8K20U1gHqYfsWP08aLl0=', link: '/beauty' },
+  { name: 'Men', image: 'https://img.freepik.com/free-photo/photo-attractive-smiling-man-with-trendy-hairstyle-positive-look-dressed-fashionable-festive-outfit-stands-against-pink-wall_273609-23540.jpg?semt=ais_hybrid', link: 'men' },
+  { name: 'Women', image: 'https://jeffersonspeedway.com/wp-content/uploads/2014/01/womens-category.jpg', link: 'women' },
+  { name: 'Kids', image: 'https://img3.exportersindia.com/product_images/bc-full/dir_31/918678/kids-wear-1307344.jpg', link: 'kids' },
+  { name: 'Home & Living', image: 'https://i.etsystatic.com/inv/412c11/2821733010/inv_fullxfull.2821733010_17r3408a.jpg?version=0', link: 'home-living' },
+  { name: 'Beauty', image: 'https://media.istockphoto.com/id/1414801672/photo/cardboard-box-with-cosmetics-product-in-front-od-open-door-buying-online-and-delivery.jpg?s=612x612&w=0&k=20&c=SA9VCzp-QtpzlliX8dM_uoH8K20U1gHqYfsWP08aLl0=', link: 'beauty' },
 ];
 
 export default function ProductCategories() {
@@ -93,7 +93,7 @@ export default function ProductCategories() {
         {categories.map((category) => (
           <Grid item xs={12} sm={6} md={4} key={category.name}>
             <Card
-              onClick={() => navigate(category.link)}
+              onClick={() => navigate(`/category/${category.link}`)}
               sx={{
                 cursor: 'pointer',
                 boxShadow: 2,

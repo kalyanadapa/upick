@@ -4,9 +4,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavHeader from "./pages/NavHeader";
 import Footer from "./pages/Footer";
+import ScrollToTop from "./pages/ScrollTop";
 const App = () => {
   return (
     <>
+    <ScrollToTop/>
       <ToastContainer />
    <NavHeader/>
       {/* <Navigation /> */}
