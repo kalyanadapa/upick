@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 
 import axios from 'axios';
 import { useState } from 'react';
@@ -155,7 +156,7 @@ export default function Header({categories}) {
         {category.subcategories.map((subcategory) => (
           <Link
             key={subcategory._id}
-            to={`/category/${category.name.toLowerCase()}/${subcategory.name.toLowerCase()}`}  // Link to the subcategory
+            to={`/category/${category.name.toLowerCase()}?sub_category=${subcategory._id}`}  // Link to the subcategory
             className="block text-gray-700 hover:text-gray-900 px-3 py-1 text-sm"
           >
             {subcategory.name}

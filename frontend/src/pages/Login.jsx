@@ -8,6 +8,7 @@ import {
   IconButton,
   InputAdornment,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Logo from "./Logo";
@@ -88,6 +89,32 @@ const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
             {isLoad ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
         </form>
+   
+      <Typography variant="h6" sx={{display:'flex', alignItems:'center', justifyContent:'center', pt:3}}>
+        <span style={{  color: '#000',  }}>
+          New User ?
+        </span> { "  "}
+        <Button
+      type="submit"
+      sx={{
+        marginLeft:'5px',
+        padding: '12px', // same as py-3
+        background: 'linear-gradient(45deg, #ff3ed5d1, #ff9900)', // gradient background
+        color: 'white', // text color
+        borderRadius: '8px', // rounded corners
+        fontWeight: 'bold', // bold text
+        transition: '0.3s', // transition effect
+        '&:hover': {
+          background: 'linear-gradient(45deg, #ff9900, #ff6600)', // hover gradient
+          transform: 'scale(1.05)', // scale on hover
+        },
+      }}
+    >
+    Sign Up
+    </Button>
+      </Typography>
+      
+  
       </Box>
     </Modal>
   );

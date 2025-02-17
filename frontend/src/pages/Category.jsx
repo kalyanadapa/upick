@@ -1,7 +1,7 @@
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
-import { Button, TextField, Typography, Box, List, ListItem, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, CircularProgress } from "@mui/material";
+import { Button, TextField, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, CircularProgress } from "@mui/material";
 import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
 
@@ -13,8 +13,16 @@ const CategoryPage = () => {
   const { data: categories, isLoading } = useFetchCategoriesQuery();
 
   // State for selected category
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCat, setSelectedCat] = useState({})
+   // State for selected subcategories
+   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+   // State for price filter
+   const [priceFilter, setPriceFilter] = useState("");
+   // Get subcategory ID from query params
+   const queryParams = new URLSearchParams(search);
+   const subCategoryId = queryParams.get("sub_category");
   useEffect(() => {
     if (categoryName&& categories?.data) {
       // Check if the category exists in the fetched categories
@@ -31,15 +39,12 @@ const CategoryPage = () => {
       }
     }
   }, [categories, categoryName]);
+  useEffect(() => {
+    const subCategoriesFromURL = searchParams.getAll("sub_category"); // Get multiple subcategories
+    setSelectedSubCategories(subCategoriesFromURL);
+  }, [searchParams]);
+ 
 
-  // State for selected subcategories
-  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-  // State for price filter
-  const [priceFilter, setPriceFilter] = useState("");
-
-  // Get subcategory ID from query params
-  const queryParams = new URLSearchParams(search);
-  const subCategoryId = queryParams.get("sub_category");
 
   useEffect(() => {
     if (subCategoryId) {
@@ -90,10 +95,18 @@ console.log("selected",selectedCategory);
   // Handle subcategory selection
   const handleSubCategoryChange = (event) => {
     const subCategoryId = event.target.value;
-    setSelectedSubCategories((prevSelected) =>
-      event.target.checked ? [...prevSelected, subCategoryId] : prevSelected.filter((id) => id !== subCategoryId)
-    );
+    const updatedSubCategories = event.target.checked
+      ? [...selectedSubCategories, subCategoryId]
+      : selectedSubCategories.filter((id) => id !== subCategoryId);
+
+    setSelectedSubCategories(updatedSubCategories);
+
+    // Update query params
+    const params = new URLSearchParams();
+    updatedSubCategories.forEach((id) => params.append("sub_category", id));
+    setSearchParams(params);
   };
+
 
   // Log selections to the console
  useEffect(()=>{

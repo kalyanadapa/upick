@@ -7,7 +7,7 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  CircularProgress,
+  CircularProgress,Typography
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AiOutlineUpload } from "react-icons/ai";
@@ -144,6 +144,29 @@ const SignUpModal = ({isLoading , open, handleClose, onSubmit }) => {
           {isLoading ? <CircularProgress/>: "Sign Up"}  
           </Button>
         </form>
+        <Typography variant="h6" sx={{display:'flex', alignItems:'center', justifyContent:'center', pt:3}}>
+        <span style={{  color: '#000',  }}>
+         Already have an account ?
+        </span> { "  "}
+        <Button
+      type="submit"
+      sx={{
+        marginLeft:'5px',
+        padding: '12px', // same as py-3
+        background: 'linear-gradient(45deg, #ff3ed5d1, #ff9900)', // gradient background
+        color: 'white', // text color
+        borderRadius: '8px', // rounded corners
+        fontWeight: 'bold', // bold text
+        transition: '0.3s', // transition effect
+        '&:hover': {
+          background: 'linear-gradient(45deg, #ff9900, #ff6600)', // hover gradient
+          transform: 'scale(1.05)', // scale on hover
+        },
+      }}
+    >
+   Login
+    </Button>
+      </Typography>
       </Box>
     </Modal>
   );
