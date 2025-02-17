@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AiOutlineUpload } from "react-icons/ai";
-
+import Logo from "./Logo";
 // eslint-disable-next-line react/prop-types
 const SignUpModal = ({isLoading , open, handleClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -45,6 +45,7 @@ const SignUpModal = ({isLoading , open, handleClose, onSubmit }) => {
         className="bg-white p-6 rounded-2xl shadow-2xl max-w-md mx-auto mt-20 max-h-[85vh] overflow-y-auto custom-scrollbar"
         style={{ outline: "none" }}
       >
+          <Box sx={{display:"flex", alignItems:'center', justifyContent:'center'}}><Logo/></Box> 
         <h2 className="text-xl font-bold text-center mb-4">Sign Up</h2>
         <form onSubmit={handleFormSubmit} className="space-y-4">
           <TextField

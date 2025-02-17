@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Logo from "./Logo";
 
 
 const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
@@ -37,10 +38,12 @@ const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
 
   return (
     <Modal open={open} onClose={handleClose}>
+    
       <Box
         className="bg-white p-6 rounded-2xl shadow-2xl max-w-md mx-auto mt-20 max-h-[85vh] overflow-y-auto custom-scrollbar"
         style={{ outline: "none" }}
       >
+         <Box sx={{display:"flex", alignItems:'center', justifyContent:'center'}}><Logo/></Box> 
         <h2 className="text-xl font-bold text-center mb-4">Login</h2>
         <form onSubmit={handleFormSubmit} className="space-y-4">
           <TextField

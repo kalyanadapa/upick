@@ -5,6 +5,7 @@ import { Badge, InputBase,Button, AppBar, Toolbar, Container ,Box} from '@mui/ma
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 import SignUpModal from './SignUp.jsx'
 import { Link } from 'react-router';
+import Logo from './Logo.jsx';
 import { useSelector, useDispatch } from "react-redux";
 import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import { setCredentials } from "../redux/features/auth/authSlice";
@@ -131,15 +132,7 @@ export default function Header() {
       />
       <LogOutModal open={openDialog} handleClose={handleClose}/>
           <div className="flex-shrink-0">
-          <Link
-        to={"/"}  // Use Link here for navigation
-       className="flex items-center"
-      >
-            
-              <span className="text-4xl font-bold bg-gradient-to-r from-pink-700 to-orange-500 text-transparent bg-clip-text">
-                Upick
-              </span>
-            </Link>
+     <Logo/>
           </div>
 
           {/* Navigation */}
