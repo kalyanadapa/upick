@@ -12,7 +12,7 @@ import { setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 import LoginModal from "./Login.jsx"
 import LogOutModal from "./LogOut.jsx"
-export default function Header() {
+export default function Header({categories}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,13 +29,13 @@ export default function Header() {
   // eslint-disable-next-line no-unused-vars
   const [register, { isLoading:isRegister }] = useRegisterMutation();
   const [login, { isLoading, isError, error, isSuccess }] = useLoginMutation();
-  const categories = {
-    men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
-    women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
-    kids: ['Toys', 'Clothing', 'Shoes', 'Accessories'],
-    'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
-    beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
-  };
+  // const categories = {
+  //   men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
+  //   women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
+  //   kids: ['Toys', 'Clothing', 'Shoes', 'Accessories'],
+  //   'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
+  //   beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
+  // };
   const handleMouseEnter = (link) => setHoveredLink(link);
   const handleMouseLeave = () => setHoveredLink(null);
   // eslint-disable-next-line no-unused-vars
@@ -137,34 +137,35 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8 relative">
-  {Object.keys(categories).map((link) => (
-    <div
-      key={link}
-      className="relative"
-      onMouseEnter={() => handleMouseEnter(link)}
-      onMouseLeave={handleMouseLeave}
+          {categories?.map((category) => (
+  <div
+    key={category._id}
+    className="relative"
+    onMouseEnter={() => handleMouseEnter(category.name)}
+    onMouseLeave={handleMouseLeave}
+  >
+    <Link
+      to={`/category/${category.name.toLowerCase()}`}  // Use the category name here for navigation
+      className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
     >
-      <Link
-        to={`/category/${link}`}  // Use Link here for navigation
-        className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-      >
-        {link.toUpperCase().replace('-', ' & ')}
-      </Link>
-      {hoveredLink === link && (
-        <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md p-4">
-          {categories[link].map((category) => (
-            <Link
-              key={category}
-              to={`/${link}/${category.toLowerCase()}`}  // Use Link here as well
-              className="block text-gray-700 hover:text-gray-900 px-3 py-1 text-sm"
-            >
-              {category}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  ))}
+      {category.name.toUpperCase().replace('-', ' & ')}
+    </Link>
+    {hoveredLink === category.name && (
+      <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+        {category.subcategories.map((subcategory) => (
+          <Link
+            key={subcategory._id}
+            to={`/category/${category.name.toLowerCase()}/${subcategory.name.toLowerCase()}`}  // Link to the subcategory
+            className="block text-gray-700 hover:text-gray-900 px-3 py-1 text-sm"
+          >
+            {subcategory.name}
+          </Link>
+        ))}
+      </div>
+    )}
+  </div>
+))}
+
 </nav>
 
 
