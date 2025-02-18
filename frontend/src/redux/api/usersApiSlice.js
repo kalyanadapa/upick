@@ -60,6 +60,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    getCurrentUser: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/current-user`,  // Replace with actual API route for current user
+        credentials: 'include', // Ensure access token is sent
+      }),
+      providesTags: ["User"],  // Cache the user info
+    }),
   }),
 });
 
@@ -72,4 +79,5 @@ export const {
   useDeleteUserMutation,
   useUpdateUserMutation,
   useGetUserDetailsQuery,
+  useGetCurrentUserQuery,
 } = userApiSlice;

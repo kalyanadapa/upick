@@ -51,7 +51,8 @@
 import React, {useEffect} from 'react';
 import { Container, Grid, Card, CardMedia, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { useGetCurrentUserQuery } from '../redux/api/usersApiSlice';
+import { useSelector } from 'react-redux';
 const categories = [
   { name: 'Men', image: 'https://img.freepik.com/free-photo/photo-attractive-smiling-man-with-trendy-hairstyle-positive-look-dressed-fashionable-festive-outfit-stands-against-pink-wall_273609-23540.jpg?semt=ais_hybrid', link: 'men' },
   { name: 'Women', image: 'https://jeffersonspeedway.com/wp-content/uploads/2014/01/womens-category.jpg', link: 'women' },
@@ -61,29 +62,44 @@ const categories = [
 ];
 
 export default function ProductCategories() {
+  const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   const navigate = useNavigate();
-  useEffect(()=>{
-    // Function to get current user, including the access token in cookies automatically
-  const getCurrentUser = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/v1/users/current-user', {
-        method: 'GET',
-        credentials: 'include',  // Automatically includes cookies (including accessToken)
-    
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch current user');
-      }
-  
-      const data = await response.json();
-      console.log("currentuser",data);  // Handle the returned user data
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-  getCurrentUser()
-  },[])
+  const { data: user, error:userError, isLoading: userIsLoading } = useGetCurrentUserQuery( null, 
+    {
+      skip: !isAuthenticated, // Skip the query if the user is not authenticated
+    });
+  console.log("user",user);
+  // useEffect(() => {
+  //   // Function to fetch the current user, including access token in cookies
+  //   const getCurrentUser = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:8000/api/v1/users/current-user', {
+  //         method: 'GET',
+  //         credentials: 'include',  // Automatically includes cookies (including accessToken)
+  //       });
+
+  //       if (!response.ok) {
+  //         // If response is not OK (e.g., status 401, 500), handle the error
+  //         if (response.status === 401) {
+  //           // Handle unauthorized, e.g., logout or redirect to login
+  //           console.log("Unauthorized. Please log in.");
+  //           // Optionally clear localStorage or trigger a logout action
+  //           // localStorage.removeItem('userInfo');
+  //           // window.location.href = '/login';  // Redirect to login page
+  //         } else {
+  //           throw new Error(`Failed to fetch current user: ${response.statusText}`);
+  //         }
+  //       } else {
+  //         const data = await response.json();
+  //         console.log("Current user data:", data);  // Handle the returned user data
+  //       }
+  //     } catch (error) {
+  //       console.error('Error:', error.message);  // Log any error that occurs during the fetch
+  //     }
+  //   };
+
+  //   getCurrentUser();  // Call the function on component mount
+  // }, []);  
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>

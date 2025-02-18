@@ -31,7 +31,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
-      console.log("res",res);
+      console.log("res login",res);
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
     } catch (err) {
