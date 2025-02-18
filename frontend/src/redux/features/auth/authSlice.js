@@ -30,16 +30,10 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
-const isTokenValid = () => {
-  const expirationTime = localStorage.getItem("expirationTime");
-  return expirationTime && new Date().getTime() < Number(expirationTime);
-};
-
 const initialState = {
-  userInfo: localStorage.getItem("userInfo") && isTokenValid()
-    ? JSON.parse(localStorage.getItem("userInfo"))
-    : null,
-    isAuthenticated: !!(localStorage.getItem("userInfo") && isTokenValid())
+  // Directly retrieve userInfo from localStorage and parse it if it exists
+  userInfo: localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null,
+  isAuthenticated: !!localStorage.getItem("userInfo"), // Determine if user is authenticated based on userInfo existence
 };
 
 const authSlice = createSlice({
@@ -47,23 +41,25 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
+      // Store userInfo and mark user as authenticated
       state.userInfo = action.payload;
-      state.isAuthenticated = true; // Mark user as authenticated
+      state.isAuthenticated = true;
+
+      // Store user info and expiration time in localStorage
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
 
+      // Set expiration time (e.g., 30 days from now)
       const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000; // 30 days
       localStorage.setItem("expirationTime", expirationTime);
     },
     logout: (state) => {
+      // Clear the state and localStorage on logout
       state.userInfo = null;
       state.isAuthenticated = false;
       localStorage.clear();
     },
-    checkAuthState: (state) => {
-      state.isAuthenticated = state.userInfo && isTokenValid();
-    },
   },
 });
 
-export const { setCredentials, logout, checkAuthState } = authSlice.actions;
+export const { setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;

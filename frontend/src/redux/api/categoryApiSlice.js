@@ -49,6 +49,7 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: CATEGORY_URL,
         method: "GET",
+        isProtected: false,
       }),
       providesTags: ["Category"], // Helps with cache invalidation
     }),
