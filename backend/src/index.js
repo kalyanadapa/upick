@@ -5,17 +5,80 @@ import connectDB from "./db/index.js";
 // import Product from "./models/product.model.js";
 // import mongoose from 'mongoose';
 import {app} from './app.js'
+//import Brand from "./models/brand.model.js";
 dotenv.config({
     path: './.env'
 })
 
-
-
+// const brands = [
+//     {
+//       name: "Adidas",
+//       logo: "",
+//       description: "Adidas creates sportswear, shoes, and accessories for athletes.",
+//     },
+//     {
+//       name: "Reebok",
+//       logo: "reebok-logo-url",
+//       description: "",
+//     },
+//     {
+//       name: "Under Armour",
+//       logo: "",
+//       description: "Under Armour specializes in sports apparel, shoes, and accessories.",
+//     },
+//     {
+//       name: "Asics",
+//       logo: "",
+//       description: "Asics is known for their running shoes and sports gear.",
+//     },
+//     {
+//       name: "New Balance",
+//       logo: "",
+//       description: "New Balance creates athletic footwear and apparel.",
+//     },
+//     {
+//       name: "Converse",
+//       logo: "",
+//       description: "Converse is famous for its iconic sneakers.",
+//     },
+//     {
+//       name: "Vans",
+//       logo: "",
+//       description: "Vans is a popular brand for skateboarding and lifestyle shoes.",
+//     },
+//     {
+//       name: "Fila",
+//       logo: "",
+//       description: "Fila is known for its athletic and casual footwear.",
+//     },
+//     {
+//       name: "Others", // A placeholder for brands with missing logo or description
+//       logo: "", // No logo
+//       description: "This category includes brands without a logo or description.",
+//     },
+//   ];
+//   async function insertBrands() {
+//     try {
+//       // Check if the brands already exist to prevent duplicates
+//       const existingBrands = await Brand.find({ name: { $in: brands.map(b => b.name) } });
+  
+//       if (existingBrands.length === 0) {
+//         // Insert brands if none are found
+//         await Brand.insertMany(brands);
+//         console.log("Brands inserted successfully!");
+//       } else {
+//         console.log("Brands already exist in the database.");
+//       }
+//     } catch (error) {
+//       console.error("Error inserting brands:", error);
+//     }
+//   }
 connectDB()
 .then(() => {
     app.listen(process.env.PORT || 8000, () => {
         // generateAndInsertProducts();
         //updateSubcategoryNames();
+        // insertBrands();
         console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
     })
 })

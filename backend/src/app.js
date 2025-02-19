@@ -27,6 +27,7 @@ import playlistRouter from "./routes/playlist.routes.js"
 import dashboardRouter from "./routes/dashboard.routes.js"
 import categoryRouter from './routes/category.routes.js'
 import productRouter from './routes/product.routes.js'
+import brandRouter from "./routes/brand.routes.js"
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Server is running successfully!" });
 });
@@ -53,6 +54,7 @@ const globalErrorHandler = (err, req, res, next) => {
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/brands",brandRouter)
 app.use("/api/v1/category",categoryRouter )
 app.use("/api/v1/product",productRouter)
 app.use("/api/v1/tweets", tweetRouter)

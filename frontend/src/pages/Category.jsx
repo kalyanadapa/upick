@@ -134,13 +134,14 @@ console.log("selected",selectedCategory);
         <CircularProgress sx={{ color: "white" }} />
       </Box>
     )}
-  <Box sx={{
+  <Box className="bg-[#151515] p-3 mt-2 mb-2" sx={{
   position: 'sticky',
   top: 85,
   width: '17vw',
   maxHeight: '83vh', // Keeps the left side fixed at 100vh height
   overflowY: 'auto',  // Allow scrolling if needed within the filter section
   paddingRight: 2,
+
   '::-webkit-scrollbar': {
     width: '2px',  // Thin scrollbar
   },
@@ -153,7 +154,7 @@ console.log("selected",selectedCategory);
   }
 }}>
     {/* Category Selection (Radio Buttons) */}
-    <Typography variant="h6" gutterBottom>Categories</Typography>
+    <Typography variant="h6" sx={{fontSize:'16px', background:"black", textAlign:'center', p:1.5}} className="rounded-full" gutterBottom>Filter by Categories</Typography>
     <FormControl component="fieldset">
       <RadioGroup value={selectedCategory} onChange={handleCategoryChange}>
         {categories?.data?.map((category) => (
@@ -169,7 +170,7 @@ console.log("selected",selectedCategory);
     </FormControl>
 
     {/* Subcategory Selection (Checkboxes) */}
-    <Typography variant="h6" gutterBottom>Subcategories</Typography>
+    <Typography variant="h6" sx={{fontSize:'16px', background:"black", textAlign:'center', p:1.5}} className="rounded-full" gutterBottom>Filter by Subcategories</Typography>
     <FormControl component="fieldset">
       {availableSubCategories.length > 0 ? (
         availableSubCategories.map((subcategory) => (
@@ -185,7 +186,7 @@ console.log("selected",selectedCategory);
     </FormControl>
 
     {/* Price filter */}
-    <Typography variant="h6" gutterBottom>Filter by Price</Typography>
+    <Typography variant="h6" sx={{fontSize:'16px', background:"black", textAlign:'center', p:1.5}} className="rounded-full" gutterBottom>Filter by Price</Typography>
     <TextField
       variant="outlined"
       type="number"
@@ -214,7 +215,7 @@ console.log("selected",selectedCategory);
   {/* Right Side: Products */}
   <Box sx={{
     flex: 1, // Takes remaining space
-    overflowY: 'auto', // Only this section will scroll when content exceeds
+    overflowY: 'hidden', // Only this section will scroll when content exceeds
     paddingLeft: 4,
     display: 'flex',
     flexDirection: 'column',
