@@ -24,7 +24,8 @@ const ProductCard = ({ product }) => {
       <section className="relative">
         <Link to={`/product/${product._id}`}>
           <span className="absolute bottom-3 right-3 bg-pink-100 text-pink-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
-            {product?.brand}
+          {typeof product?.brand === "object" ? product.brand.name : product.brand}
+
           </span>
           <img
             className="cursor-pointer w-full"

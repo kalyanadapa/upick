@@ -248,6 +248,7 @@ import { toast } from "react-toastify";
 import AdminMenu from "./AdminMenu";
 import { useFetchCategoriesQuery } from "../../redux/api/categoryApiSlice";
 import axios from "axios";
+import { useFetchBrandsQuery } from "../../redux/api/brandApiSlice";
 
 const ProductList = () => {
   const [images, setImages] = useState([]);
@@ -262,6 +263,9 @@ const ProductList = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const fileInputRef = useRef(null); // Ref for the file input
   const navigate = useNavigate();
+  const { data: brands, isLoading:brandsLoading, error:brandsError } = useFetchBrandsQuery();
+  console.log("brands",brands);
+  
 
   const { data: categories, error, isLoading } = useFetchCategoriesQuery(); // Use RTK Query hook
 
@@ -283,7 +287,9 @@ const ProductList = () => {
     setImages([]);
     setImageUrls([]);
   };
-
+const handleBrandChange = (e) => {
+  setBrand(e.target.value); // Set the brand ID instead of name
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -424,15 +430,24 @@ const ProductList = () => {
                   />
                 </div>
 
-                <div className="flex flex-col">
-                  <label htmlFor="brand" className="text-white">Brand</label>
-                  <input
-                    type="text"
-                    className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                  />
-                </div>
+       
+  <div className="flex flex-col">
+    <label htmlFor="brand" className="text-white">Brand</label>
+    <select
+      value={brand}
+      onChange={handleBrandChange}
+      className="p-4 mb-3 w-full border rounded-lg bg-[#101011] text-white"
+    >
+      <option value="">Select Brand</option>
+      {brands?.data?.map((brandItem) => (
+        <option key={brandItem._id} value={brandItem._id}>
+          {brandItem.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+
               </div>
 
               <div className="flex flex-col mb-5">

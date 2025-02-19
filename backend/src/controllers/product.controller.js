@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import Product from "../models/product.model.js";
+import Brand from "../models/brand.model.js"
 import Category from "../models/category.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -226,7 +227,10 @@ export const createProduct = asyncHandler(async (req, res) => {
   if (!name || !brand || !category || !subcategory || !price) {
     throw new ApiError(400, "All required fields must be provided");
   }
-
+  const brandData = await Brand.findById(brand);  // Assuming Brand is a model
+  if (!brandData) {
+    throw new ApiError(404, "Brand not found");
+  }
   // 2️⃣ Check if category exists
   const categoryData = await Category.findById(category);
   if (!categoryData) {
@@ -253,7 +257,10 @@ export const createProduct = asyncHandler(async (req, res) => {
   // 5️⃣ Create new product with subcategory (_id + name)
   const newProduct = new Product({
     name,
-    brand,
+    brand: {
+      _id: brandData._id,      // Store brand ID
+      name: brandData.name,    // Store brand name
+    },
     category, // Stores only the category ID
     subcategory: {
       _id: subcategoryData._id,

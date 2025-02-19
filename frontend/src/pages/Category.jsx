@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
-import { Button, TextField, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Checkbox, CircularProgress } from "@mui/material";
+import { Button, TextField, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl,Slider, FormLabel, Checkbox, CircularProgress } from "@mui/material";
 import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
 
@@ -11,6 +11,7 @@ const CategoryPage = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
   const { data: categories, isLoading } = useFetchCategoriesQuery();
+  const [priceRange, setPriceRange] = useState([0, 10000]);
 
   // State for selected category
   const [searchParams, setSearchParams] = useSearchParams();
@@ -107,6 +108,9 @@ console.log("selected",selectedCategory);
     setSearchParams(params);
   };
 
+  const handlePriceChange = (event, newValue) => {
+    setPriceRange(newValue);
+  };
 
   // Log selections to the console
  useEffect(()=>{
@@ -137,9 +141,10 @@ console.log("selected",selectedCategory);
   <Box className="bg-[#151515] p-3 mt-2 mb-2" sx={{
   position: 'sticky',
   top: 85,
-  width: '17vw',
+  width: '20vw',
   maxHeight: '83vh', // Keeps the left side fixed at 100vh height
   overflowY: 'auto',  // Allow scrolling if needed within the filter section
+  overflowX:'hidden',
   paddingRight: 2,
 
   '::-webkit-scrollbar': {
@@ -186,30 +191,53 @@ console.log("selected",selectedCategory);
     </FormControl>
 
     {/* Price filter */}
-    <Typography variant="h6" sx={{fontSize:'16px', background:"black", textAlign:'center', p:1.5}} className="rounded-full" gutterBottom>Filter by Price</Typography>
-    <TextField
-      variant="outlined"
-      type="number"
-      label="Max Price"
-      fullWidth
-      value={priceFilter}
-      onChange={(e) => setPriceFilter(e.target.value)}
-      className="mb-4"
-    />
+    <Typography variant="h6" sx={{ fontSize: '16px', background: "black", textAlign: 'center', p: 1.5 }} className="rounded-full" gutterBottom>
+          Filter by Price
+        </Typography>
+        <Slider
+          value={priceRange}
+          onChange={handlePriceChange}
+          valueLabelDisplay="auto"
+          valueLabelFormat={(value) => `$${value.toLocaleString()}`}
+          min={0}
+          max={10000}
+          step={100}
+          sx={{
+            width: '95%',
+            '& .MuiSlider-root': {
+              color: '#e32d92', // Pink color for the entire slider
+            },
+            '& .MuiSlider-thumb': {
+              backgroundColor: 'rgb(227, 45, 146)', // Pink thumb color
+            },
+            '& .MuiSlider-rail': {
+              backgroundColor: '#d3d3d3', // Rail color (gray)
+            },
+            '& .MuiSlider-track': {
+              backgroundColor: 'rgb(227, 45, 146)', // Pink track color
+              border: '2px solid #e32d92',
+            },
+            '& .MuiSlider-valueLabel': {
+              backgroundColor: 'rgb(227, 45, 146)', // Pink value label background
+            },
+          }}
+        />
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            setSelectedCategory("");
+            setSelectedSubCategories([]);
+            setPriceRange([0, 10000]);
+            navigate("/category");
+          }}
+        >
+          Reset Filters
+        </Button>
 
     {/* Reset Filters */}
-    <Button
-      variant="contained"
-      color="secondary"
-      onClick={() => {
-        setSelectedCategory("");
-        setSelectedSubCategories([]);
-        setPriceFilter("");
-        navigate("/category");
-      }}
-    >
-      Reset Filters
-    </Button>
+   
   </Box>
 
   {/* Right Side: Products */}

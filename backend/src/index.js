@@ -10,6 +10,20 @@ dotenv.config({
     path: './.env'
 })
 
+
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        // generateAndInsertProducts();
+        //updateSubcategoryNames();
+        // insertBrands();
+        //updateProductBrands();
+        console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
+    })
+})
+.catch((err) => {
+    console.log("MONGO db connection failed !!! ", err);
+})
 // const brands = [
 //     {
 //       name: "Adidas",
@@ -73,20 +87,49 @@ dotenv.config({
 //       console.error("Error inserting brands:", error);
 //     }
 //   }
-connectDB()
-.then(() => {
-    app.listen(process.env.PORT || 8000, () => {
-        // generateAndInsertProducts();
-        //updateSubcategoryNames();
-        // insertBrands();
-        console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
-    })
-})
-.catch((err) => {
-    console.log("MONGO db connection failed !!! ", err);
-})
-
-
+// const updateProductBrands = async () => {
+//     // Fetch all brands (only IDs and names)
+//     const brands = await Brand.find({}, { _id: 1, name: 1 }); // Fetch only necessary fields
+//     if (brands.length === 0) {
+//       console.log("⚠️ No brands found in the database.");
+//       return;
+//     }
+  
+//     // Fetch products where `brand` is stored as a string instead of an object
+//     const products = await Product.find({ brand: { $type: "string" } });
+//     if (products.length === 0) {
+//       console.log("✅ No products need updating.");
+//       return;
+//     }
+  
+//     console.log(`🔍 Found ${products.length} products to update.`);
+  
+//     // Shuffle the brand list to ensure randomness
+//     const shuffledBrands = [...brands].sort(() => Math.random() - 0.5);
+  
+//     let brandIndex = 0; // Index to cycle through brands
+  
+//     // Update each product with a random brand from existing brands
+//     for (const product of products) {
+//       const selectedBrand = shuffledBrands[brandIndex];
+  
+//       await Product.findByIdAndUpdate(product._id, {
+//         $set: {
+//           brand: {
+//             _id: selectedBrand._id,
+//             name: selectedBrand.name,
+//           },
+//         },
+//       });
+  
+//       console.log(`✅ Updated product: ${product._id} → Brand: ${selectedBrand.name}`);
+  
+//       // Move to the next brand (loop back if we reach the end)
+//       brandIndex = (brandIndex + 1) % shuffledBrands.length;
+//     }
+  
+//     console.log("🎉 All products updated successfully!");
+//   };
 
 // const updateSubcategoryNames = asyncHandler(async () => {
 //   // 1️⃣ Find all products where subcategory only has an _id and no name

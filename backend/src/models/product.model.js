@@ -20,7 +20,10 @@ const productSchema = mongoose.Schema(
     name: { type: String, required: true },
     // image: { type: String, required: true },
     images: { type: [String], required: true }, // Array of image URLs
-    brand: { type: ObjectId, ref: "Brand", required: true },
+    brand: {
+      _id: { type: ObjectId, required: true, ref: "Brand" }, // Store brand ID
+      name: { type: String, required: true }, // Store brand name
+    },
     quantity: { type: Number, required: true },
     category: { type: ObjectId, ref: "Category", required: true },
     subcategory: {
