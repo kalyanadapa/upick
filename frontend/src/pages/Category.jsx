@@ -255,7 +255,7 @@ console.log("selected",selectedCategory);
       ) : isError ? (
         <Typography>Error fetching products.</Typography>
       ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-grow">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 ">
         {products?.data?.length > 0 ? (
           products?.data?.map((product) => <ProductCard key={product._id} product={product} />)
         ) : (

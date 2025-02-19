@@ -132,11 +132,11 @@ const ProductCard = ({ product }) => {
             alt={product.name}
           />
         </Link>
-        <HeartIcon product={product} />
+       
       </section>
 
       {/* Product Details */}
-      <div className="p-5 h-50">
+      <div className="p-5 max-h-[35vh]">
         <div className="flex justify-between items-start">
           <h5 
             className="mb-2 text-xl text-white dark:text-white"
@@ -184,13 +184,14 @@ const ProductCard = ({ product }) => {
               />
             </svg>
           </Link>
-
+          <span className="flex justify-between items-center">  <HeartIcon product={product} />
           <button
             className="p-2 rounded-full"
             onClick={() => addToCartHandler(product, 1)}
           >
             <AiOutlineShoppingCart size={25} />
-          </button>
+          </button></span>
+        
         </section>
       </div>
     </div>
