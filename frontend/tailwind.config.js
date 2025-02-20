@@ -5,6 +5,5 @@ export default {
     extend: {},
   },
   plugins: [
-    require('@tailwindcss/line-clamp'), // Add the line-clamp plugin here
   ],
 };
