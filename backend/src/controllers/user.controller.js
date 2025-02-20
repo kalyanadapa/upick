@@ -228,8 +228,6 @@ const loginUser = asyncHandler(async (req, res) =>{
         httpOnly: true,
         secure: true,
         sameSite: 'None', // Add this
-  domain: 'upick-1.onrender.com',
-  path: '/',
     }
 
     return res
