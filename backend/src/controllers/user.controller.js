@@ -350,7 +350,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const cookieOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "Strict",
+            sameSite: "None",
         };
 
         // Send new tokens in cookies & response
