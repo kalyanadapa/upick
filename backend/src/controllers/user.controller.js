@@ -351,6 +351,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',  // Set to true for production (https)
             sameSite: 'None',  // Allow cross-origin cookies
+            domain: '.upick-1.onrender.com/', // Allows subdomains as well
+            path: '/', 
          };
          
         // Send new tokens in cookies & response
