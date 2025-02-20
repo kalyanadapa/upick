@@ -7,6 +7,7 @@ import Product from "./Products/Product";
 import {  Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Swiper core styles
 import "swiper/css/navigation"; // Navigation styles
+import 'swiper/swiper-bundle.css'
 import 'swiper/css/autoplay'; 
 import { Autoplay, Navigation, Pagination } from "swiper/modules"; // Fixed import
 import ProductCategories from "./ProductCategories";
