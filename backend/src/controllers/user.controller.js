@@ -349,10 +349,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         // Set secure cookie options
         const cookieOptions = {
             httpOnly: true,
-            secure: true,
-            sameSite: "None",
-        };
-
+            secure: process.env.NODE_ENV === 'production',  // Set to true for production (https)
+            sameSite: 'None',  // Allow cross-origin cookies
+         };
+         
         // Send new tokens in cookies & response
         return res
             .status(200)
