@@ -24,6 +24,14 @@ export default function LogOut({ open, handleClose }) {
           navigate("/"); 
         } catch (error) {
           console.error(error);
+          if(error.data.statusCode===401){
+            localStorage.clear()
+            document.cookie = "accessToken=; Max-Age=0; path=/; HttpOnly; secure";
+            document.cookie = "refreshToken=; Max-Age=0; path=/; HttpOnly; secure";
+          
+            // Refresh the page to log the user out or redirect to login page
+            window.location.reload(); 
+          }
         }
       };
   return (
