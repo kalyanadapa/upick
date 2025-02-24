@@ -50,6 +50,7 @@ export const createCategory = asyncHandler(async (req, res, next) => {
 });
 
 
+
 // ✅ PATCH: Update a category (Admin only)
 export const updateCategory = asyncHandler(async (req, res, next) => {
   const { name, subcategories } = req.body;

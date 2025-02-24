@@ -5,6 +5,7 @@ import Category from "../models/category.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { productTypes } from "../config/ProductTypes.js";
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
 // Get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
@@ -78,7 +79,7 @@ export const getAllProductsByCategory = asyncHandler(async (req, res) => {
   const products = await Product.find(query)
     .populate({
       path: "category",
-      select: "_id name subcategories",
+      select: "_id name",//removed the subcategories here
     });
 
   return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"));
@@ -220,30 +221,94 @@ export const getProductById = asyncHandler(async (req, res) => {
 
 // Update a product (Admin protected)
 
+// export const createProduct = asyncHandler(async (req, res) => {
+//   const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
+
+//   // 1️⃣ Validate Required Fields
+//   if (!name || !brand || !category || !subcategory || !price) {
+//     throw new ApiError(400, "All required fields must be provided");
+//   }
+//   const brandData = await Brand.findById(brand);  // Assuming Brand is a model
+//   if (!brandData) {
+//     throw new ApiError(404, "Brand not found");
+//   }
+//   // 2️⃣ Check if category exists
+//   const categoryData = await Category.findById(category);
+//   if (!categoryData) {
+//     throw new ApiError(404, "Category not found");
+//   }
+
+//   // 3️⃣ Find subcategory inside the category's subcategories array
+//   const subcategoryData = categoryData.subcategories.find(sub => sub._id.toString() === subcategory);
+//   if (!subcategoryData) {
+//     throw new ApiError(404, "Subcategory not found in the selected category");
+//   }
+
+//   // 4️⃣ Upload product images to Cloudinary (if files exist)
+//   let productImageUrls = [];
+//   if (req.files?.length > 0) {
+//     const uploadPromises = req.files.map(async (file) => {
+//       const cloudinaryResult = await uploadOnCloudinary(file.path);
+//       return cloudinaryResult?.url;
+//     });
+
+//     productImageUrls = (await Promise.all(uploadPromises)).filter(url => url); // Remove undefined values
+//   }
+
+//   // 5️⃣ Create new product with subcategory (_id + name)
+//   const newProduct = new Product({
+//     name,
+//     brand: {
+//       _id: brandData._id,      // Store brand ID
+//       name: brandData.name,    // Store brand name
+//     },
+//     category, // Stores only the category ID
+//     subcategory: {
+//       _id: subcategoryData._id,
+//       name: subcategoryData.name, // Store subcategory name dynamically
+//     },
+//     description,
+//     price,
+//     quantity,
+//     countInStock,
+//     images: productImageUrls,
+//   });
+
+//   // 6️⃣ Save product
+//   await newProduct.save();
+//   return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
+// });
+
+
 export const createProduct = asyncHandler(async (req, res) => {
-  const { name, brand, category, subcategory, description, price, quantity, countInStock } = req.body;
+  const { name, brand, category, subcategory, description, price, quantity, countInStock, discountPrice,type } = req.body;
 
   // 1️⃣ Validate Required Fields
-  if (!name || !brand || !category || !subcategory || !price) {
+  if (!name || !brand || !category || !subcategory || !price || !quantity || !countInStock) {
     throw new ApiError(400, "All required fields must be provided");
   }
-  const brandData = await Brand.findById(brand);  // Assuming Brand is a model
+  if (!productTypes[type]) {
+    throw new ApiError(400, "Invalid product type");
+  }
+  // 2️⃣ Check if the brand exists
+  const brandData = await Brand.findById(brand);
   if (!brandData) {
     throw new ApiError(404, "Brand not found");
   }
-  // 2️⃣ Check if category exists
+
+  // 3️⃣ Check if category exists
   const categoryData = await Category.findById(category);
   if (!categoryData) {
     throw new ApiError(404, "Category not found");
   }
 
-  // 3️⃣ Find subcategory inside the category's subcategories array
+  // 4️⃣ Find subcategory inside the category's subcategories array
   const subcategoryData = categoryData.subcategories.find(sub => sub._id.toString() === subcategory);
   if (!subcategoryData) {
     throw new ApiError(404, "Subcategory not found in the selected category");
   }
 
-  // 4️⃣ Upload product images to Cloudinary (if files exist)
+  // 5️⃣ Upload product images to Cloudinary (if files exist)
   let productImageUrls = [];
   if (req.files?.length > 0) {
     const uploadPromises = req.files.map(async (file) => {
@@ -254,14 +319,14 @@ export const createProduct = asyncHandler(async (req, res) => {
     productImageUrls = (await Promise.all(uploadPromises)).filter(url => url); // Remove undefined values
   }
 
-  // 5️⃣ Create new product with subcategory (_id + name)
+  // 6️⃣ Create new product
   const newProduct = new Product({
     name,
     brand: {
-      _id: brandData._id,      // Store brand ID
-      name: brandData.name,    // Store brand name
+      _id: brandData._id,       // Store brand ID
+      name: brandData.name,     // Store brand name
     },
-    category, // Stores only the category ID
+    category,                   // Stores only the category ID
     subcategory: {
       _id: subcategoryData._id,
       name: subcategoryData.name, // Store subcategory name dynamically
@@ -270,11 +335,17 @@ export const createProduct = asyncHandler(async (req, res) => {
     price,
     quantity,
     countInStock,
-    images: productImageUrls,
+    discountPrice,              // Optional field
+    rating: 0,                  // Default rating is 0 for new product
+    numReviews: 0,              // Default number of reviews is 0
+    images: productImageUrls,    // Array of image URLs from Cloudinary
+    type, 
   });
 
-  // 6️⃣ Save product
+  // 7️⃣ Save product
   await newProduct.save();
+  
+  // 8️⃣ Return success response
   return res.status(201).json(new ApiResponse(201, newProduct, "Product created successfully"));
 });
 
