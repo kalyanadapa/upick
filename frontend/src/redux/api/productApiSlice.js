@@ -19,11 +19,13 @@ export const productApiSlice = apiSlice.injectEndpoints({
     //   ],
     // }),
     getProductsByCategory : builder.query({
-      query: ({ categoryId, subCategoryIds=[] }) => ({
+      query: ({ categoryId, subCategoryIds=[],minPrice=0,maxPrice=10000 }) => ({
         url: `${PRODUCT_URL}/all_products`,
         params: {
           category: categoryId,
           subcategories: subCategoryIds.length > 0 ? subCategoryIds.join(",") : undefined, // Convert array to comma-separated string
+          minPrice: minPrice,
+          maxPrice: maxPrice, 
         },
       }),
       providesTags: ["Products"],

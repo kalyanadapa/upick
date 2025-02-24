@@ -4,7 +4,7 @@ import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
 import { Button, TextField, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl,Slider, FormLabel, Checkbox, CircularProgress } from "@mui/material";
 import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
-
+import { useDebounce } from "../Utils/customDebounce";
 const CategoryPage = () => {
   const { categoryName } = useParams();
   // const { data: products, isError } = useAllProductsQuery();
@@ -12,7 +12,7 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const { data: categories, isLoading } = useFetchCategoriesQuery();
   const [priceRange, setPriceRange] = useState([0, 10000]);
-
+  const debouncedPriceRange = useDebounce(priceRange, 800);
   // State for selected category
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -53,7 +53,9 @@ const CategoryPage = () => {
     }
   }, [subCategoryId]);
   const { data: products, isError, isFetching,refetch } = useGetProductsByCategoryQuery(
-    { categoryId: selectedCat._id, subCategoryIds: selectedSubCategories }, 
+    { categoryId: selectedCat._id, subCategoryIds: selectedSubCategories,
+      minPrice: debouncedPriceRange[0],
+      maxPrice: debouncedPriceRange[1], }, 
     { skip: !selectedCat._id }
   );
 useEffect(() => {
@@ -90,6 +92,10 @@ console.log("selected",selectedCategory);
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
     setSelectedSubCategories([]); // Reset subcategories when category changes
+    setPriceRange([0, 10000]);
+     const updatedSearchParams = new URLSearchParams(searchParams);
+  updatedSearchParams.delete("minPrice");
+  updatedSearchParams.delete("maxPrice");
     navigate(`/category/${newCategory.toLowerCase()}`);
   };
 
@@ -99,17 +105,32 @@ console.log("selected",selectedCategory);
     const updatedSubCategories = event.target.checked
       ? [...selectedSubCategories, subCategoryId]
       : selectedSubCategories.filter((id) => id !== subCategoryId);
-
+  
     setSelectedSubCategories(updatedSubCategories);
-
-    // Update query params
-    const params = new URLSearchParams();
-    updatedSubCategories.forEach((id) => params.append("sub_category", id));
-    setSearchParams(params);
+  
+    // Start with the current search params
+    const updatedSearchParams = new URLSearchParams(searchParams);
+  
+    // Clear the current subcategory params before adding the updated ones
+    updatedSearchParams.delete("sub_category");
+  
+    // Add the updated subcategories to the query params
+    updatedSubCategories.forEach((id) => updatedSearchParams.append("sub_category", id));
+  
+    // Update the search params without affecting other params
+    setSearchParams(updatedSearchParams);
   };
-
+  
   const handlePriceChange = (event, newValue) => {
     setPriceRange(newValue);
+    const updatedSearchParams = new URLSearchParams(searchParams);
+
+  // Update or add the minPrice and maxPrice parameters
+  updatedSearchParams.set('minPrice', newValue[0]);
+  updatedSearchParams.set('maxPrice', newValue[1]);
+
+  // Set the new search params, keeping any other existing parameters intact
+  setSearchParams(updatedSearchParams);
   };
 
   // Log selections to the console
