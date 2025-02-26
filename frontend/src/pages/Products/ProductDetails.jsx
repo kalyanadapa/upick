@@ -36,11 +36,12 @@ const ProductDetails = () => {
     refetch,
     error,
   } = useGetProductDetailsQuery(productId);
+console.log("product",product);
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [createReview, { isLoading: loadingProductReview }] =
-    useCreateReviewMutation();
+  // const [createReview, { isLoading: loadingProductReview }] =
+  //   useCreateReviewMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -85,7 +86,7 @@ const ProductDetails = () => {
           <div className="flex flex-wrap relative items-between mt-[2rem] ml-[10rem]">
             <div>
               <img
-                src={product.image}
+                src={product.images[0]}
                 alt={product.name}
                 className="w-full xl:w-[50rem] lg:w-[45rem] md:w-[30rem] sm:w-[20rem] mr-[2rem]"
               />
@@ -105,7 +106,7 @@ const ProductDetails = () => {
                 <div className="one">
                   <h1 className="flex items-center mb-6">
                     <FaStore className="mr-2 text-white" /> Brand:{" "}
-                    {product.brand}
+                    {product.brand.name}
                   </h1>
                   <h1 className="flex items-center mb-6 w-[20rem]">
                     <FaClock className="mr-2 text-white" /> Added:{" "}
@@ -166,9 +167,9 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            <div className="mt-[5rem] container flex flex-wrap items-start justify-between ml-[10rem]">
+            {/* <div className="mt-[5rem] container flex flex-wrap items-start justify-between ml-[10rem]">
               <ProductTabs
-                loadingProductReview={loadingProductReview}
+                loadingProductReview={ false}
                 userInfo={userInfo}
                 submitHandler={submitHandler}
                 rating={rating}
@@ -177,7 +178,7 @@ const ProductDetails = () => {
                 setComment={setComment}
                 product={product}
               />
-            </div>
+            </div> */}
           </div>
         </>
       )}

@@ -12,12 +12,12 @@ export const productApiSlice = apiSlice.injectEndpoints({
     //   providesTags: ["Products"],
     // }),
     
-    // getProductById: builder.query({
-    //   query: (productId) => `${PRODUCT_URL}/${productId}`,
-    //   providesTags: (result, error, productId) => [
-    //     { type: "Product", id: productId },
-    //   ],
-    // }),
+    getProductById: builder.query({
+      query: (productId) => `${PRODUCT_URL}/${productId}`,
+      providesTags: (result, error, productId) => [
+        { type: "Product", id: productId },
+      ],
+    }),
     getProductsByCategory : builder.query({
       query: ({ categoryId, subCategoryIds=[],minPrice=0,maxPrice=10000 }) => ({
         url: `${PRODUCT_URL}/all_products`,
@@ -34,12 +34,12 @@ export const productApiSlice = apiSlice.injectEndpoints({
       query: () => `${PRODUCT_URL}`,
     }),
 
-    // getProductDetails: builder.query({
-    //   query: (productId) => ({
-    //     url: `${PRODUCT_URL}/${productId}`,
-    //   }),
-    //   keepUnusedDataFor: 5,
-    // }),
+    getProductDetails: builder.query({
+      query: (productId) => ({
+        url: `${PRODUCT_URL}/${productId}`,
+      }),
+      keepUnusedDataFor: 5,
+    }),
 
     // createProduct: builder.mutation({
     //   query: (productData) => ({

@@ -223,11 +223,20 @@ export const getAllProductsByCategory = asyncHandler(async (req, res) => {
 });
 
 export const getProductById = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);  // Find product by ID
-  if (!product) {
-    throw new ApiError(404, "Product not found");  // Use ApiError for not found error
+  console.log("Received product ID:", req.params.id);
+
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    console.error("Invalid Product ID Format");
+    return res.status(400).json({ error: "Invalid Product ID" });
   }
-  return res.status(200).json(ApiResponse.success(product));  // Use ApiResponse for success
+
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    console.error("Product not found");
+    return res.status(404).json({ error: "Product not found" });
+  }
+
+  return res.status(200).json(product);
 });
 
 // export const createProduct = asyncHandler(async (req, res) => {
