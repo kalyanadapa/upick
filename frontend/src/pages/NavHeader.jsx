@@ -122,7 +122,7 @@ export default function Header({categories}) {
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
-        <Toolbar className="flex justify-between items-center py-4">
+        <Toolbar className="flex justify-between items-center ">
           <LoginModal isLoad={isLoading} open={open} handleClose={() => setOpen(false)}  onSubmit={handleLogin}/>
           {/* Logo */}
           <SignUpModal
@@ -137,23 +137,24 @@ export default function Header({categories}) {
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8 relative">
+          <nav className="hidden md:flex space-x-8 relative ">
           {categories?.map((category) => (
   <div
     key={category._id}
-    className="relative"
-    onMouseEnter={() => handleMouseEnter(category.name)}
+    className={`relative border-b-2 py-6 ${hoveredLink === category.name ? ' border-pink-700' : ''}`}
+    onMouseEnter={() => {handleMouseEnter(category.name)}}
     onMouseLeave={handleMouseLeave}
   >
     <Link
       to={`/category/${category.name.toLowerCase()}`}  // Use the category name here for navigation
-      className={`text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium 
-        ${hoveredLink === category.name ? 'border-b-2 border-pink-700' : ''}`}
-    >
+      className={`text-gray-700 hover:text-gray-900 px-3 py-2  text-sm font-medium 
+        `}
+        onClick={()=>setHoveredLink(null)}
+    >  
       {category.name.toUpperCase().replace('-', ' & ')}
     </Link>
     {hoveredLink === category.name && (
-      <div className="absolute left-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+      <div className="absolute left-0 top-full w-48 bg-white mt-1  shadow-lg rounded-md p-4 ">
         {category.subcategories.map((subcategory) => (
           <Link
             key={subcategory._id}
