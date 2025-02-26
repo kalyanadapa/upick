@@ -147,7 +147,8 @@ export default function Header({categories}) {
   >
     <Link
       to={`/category/${category.name.toLowerCase()}`}  // Use the category name here for navigation
-      className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+      className={`text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium 
+        ${hoveredLink === category.name ? 'border-b-2 border-pink-700' : ''}`}
     >
       {category.name.toUpperCase().replace('-', ' & ')}
     </Link>
