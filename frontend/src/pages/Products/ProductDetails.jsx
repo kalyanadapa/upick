@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import BasicBreadcrumbs from "../../components/BreadCrumbs";
 import {
   useGetProductDetailsQuery,
   useCreateReviewMutation,
@@ -66,14 +67,15 @@ console.log("product",product);
 
   return (
     <>
-      <div>
+    <BasicBreadcrumbs/>
+      {/* <div>
         <Link
           to="/"
           className="text-white font-semibold hover:underline ml-[10rem]"
         >
           Go Back
         </Link>
-      </div>
+      </div> */}
 
       {isLoading ? (
         <Loader />
@@ -83,103 +85,87 @@ console.log("product",product);
         </Message>
       ) : (
         <>
-          <div className="flex flex-wrap relative items-between mt-[2rem] ml-[10rem]">
-            <div>
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="w-full xl:w-[50rem] lg:w-[45rem] md:w-[30rem] sm:w-[20rem] mr-[2rem]"
-              />
+         <div className="flex flex-row items-start justify-between mt-[2rem]">
+  {/* Left Section - Product Image */}
+  <div className="mr-[2rem]">
+    <img
+      src={product.images[0]}
+      alt={product.name}
+      className="w-full xl:w-[50rem] lg:w-[45rem] md:w-[30rem] sm:w-[20rem]"
+    />
+    <HeartIcon product={product} />
+  </div>
 
-              <HeartIcon product={product} />
-            </div>
+  {/* Right Section - Product Details */}
+  <div className="flex flex-col justify-between w-full max-w-[40rem]">
+    <h2 className="text-2xl font-semibold">{product.name}</h2>
+    <p className="my-4 text-[#B0B0B0]">
+      {product.description}
+    </p>
 
-            <div className="flex flex-col justify-between">
-              <h2 className="text-2xl font-semibold">{product.name}</h2>
-              <p className="my-4 xl:w-[35rem] lg:w-[35rem] md:w-[30rem] text-[#B0B0B0]">
-                {product.description}
-              </p>
+    <p className="text-5xl my-4 font-extrabold">$ {product.price}</p>
 
-              <p className="text-5xl my-4 font-extrabold">$ {product.price}</p>
+    <div className="flex items-start justify-between w-full">
+      {/* Left Info Block */}
+      <div>
+        <h1 className="flex items-center mb-6">
+          <FaStore className="mr-2 text-white" /> Brand: {product.brand.name}
+        </h1>
+        <h1 className="flex items-center mb-6">
+          <FaClock className="mr-2 text-white" /> Added:{" "}
+          {moment(product.createAt).fromNow()}
+        </h1>
+        <h1 className="flex items-center mb-6">
+          <FaStar className="mr-2 text-white" /> Reviews: {product.numReviews}
+        </h1>
+      </div>
 
-              <div className="flex items-center justify-between w-[20rem]">
-                <div className="one">
-                  <h1 className="flex items-center mb-6">
-                    <FaStore className="mr-2 text-white" /> Brand:{" "}
-                    {product.brand.name}
-                  </h1>
-                  <h1 className="flex items-center mb-6 w-[20rem]">
-                    <FaClock className="mr-2 text-white" /> Added:{" "}
-                    {moment(product.createAt).fromNow()}
-                  </h1>
-                  <h1 className="flex items-center mb-6">
-                    <FaStar className="mr-2 text-white" /> Reviews:{" "}
-                    {product.numReviews}
-                  </h1>
-                </div>
+      {/* Right Info Block */}
+      <div>
+        <h1 className="flex items-center mb-6">
+          <FaStar className="mr-2 text-white" /> Ratings: {rating}
+        </h1>
+        <h1 className="flex items-center mb-6">
+          <FaShoppingCart className="mr-2 text-white" /> Quantity: {product.quantity}
+        </h1>
+        <h1 className="flex items-center mb-6">
+          <FaBox className="mr-2 text-white" /> In Stock: {product.countInStock}
+        </h1>
+      </div>
+    </div>
 
-                <div className="two">
-                  <h1 className="flex items-center mb-6">
-                    <FaStar className="mr-2 text-white" /> Ratings: {rating}
-                  </h1>
-                  <h1 className="flex items-center mb-6">
-                    <FaShoppingCart className="mr-2 text-white" /> Quantity:{" "}
-                    {product.quantity}
-                  </h1>
-                  <h1 className="flex items-center mb-6 w-[10rem]">
-                    <FaBox className="mr-2 text-white" /> In Stock:{" "}
-                    {product.countInStock}
-                  </h1>
-                </div>
-              </div>
+    <div className="flex justify-between flex-wrap">
+      <Ratings value={product.rating} text={`${product.numReviews} reviews`} />
 
-              <div className="flex justify-between flex-wrap">
-                <Ratings
-                  value={product.rating}
-                  text={`${product.numReviews} reviews`}
-                />
+      {product.countInStock > 0 && (
+        <div>
+          <select
+            value={qty}
+            onChange={(e) => setQty(e.target.value)}
+            className="p-2 w-[6rem] rounded-lg text-black"
+          >
+            {[...Array(product.countInStock).keys()].map((x) => (
+              <option key={x + 1} value={x + 1}>
+                {x + 1}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
 
-                {product.countInStock > 0 && (
-                  <div>
-                    <select
-                      value={qty}
-                      onChange={(e) => setQty(e.target.value)}
-                      className="p-2 w-[6rem] rounded-lg text-black"
-                    >
-                      {[...Array(product.countInStock).keys()].map((x) => (
-                        <option key={x + 1} value={x + 1}>
-                          {x + 1}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
+    <div className="btn-container">
+      <button
+        onClick={addToCartHandler}
+        disabled={product.countInStock === 0}
+        className="bg-pink-600 text-white py-2 px-4 rounded-lg mt-4 md:mt-0"
+      >
+        Add To Cart
+      </button>
+    </div>
+  </div>
+</div>
 
-              <div className="btn-container">
-                <button
-                  onClick={addToCartHandler}
-                  disabled={product.countInStock === 0}
-                  className="bg-pink-600 text-white py-2 px-4 rounded-lg mt-4 md:mt-0"
-                >
-                  Add To Cart
-                </button>
-              </div>
-            </div>
-
-            {/* <div className="mt-[5rem] container flex flex-wrap items-start justify-between ml-[10rem]">
-              <ProductTabs
-                loadingProductReview={ false}
-                userInfo={userInfo}
-                submitHandler={submitHandler}
-                rating={rating}
-                setRating={setRating}
-                comment={comment}
-                setComment={setComment}
-                product={product}
-              />
-            </div> */}
-          </div>
         </>
       )}
     </>
