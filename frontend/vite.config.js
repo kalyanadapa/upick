@@ -15,13 +15,13 @@ export default defineConfig({
   server: {
     historyApiFallback: true, // Ensures routes work in dev mode
   },
-  build: {
-    rollupOptions: {
-      output: {
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash][extname]',
-      },
-    },
-  },
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       entryFileNames: 'assets/[name].[hash].js',
+  //       chunkFileNames: 'assets/[name].[hash].js',
+  //       assetFileNames: 'assets/[name].[hash][extname]',
+  //     },
+  //   },
+  // },
 })
