@@ -31,6 +31,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  isLoginModalOpen: false,
   // Directly retrieve userInfo from localStorage and parse it if it exists
   userInfo: localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null,
   isAuthenticated: !!localStorage.getItem("userInfo"), // Determine if user is authenticated based on userInfo existence
@@ -52,6 +53,12 @@ const authSlice = createSlice({
       const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000; // 30 days
       localStorage.setItem("expirationTime", expirationTime);
     },
+    openLoginModal: (state) => {
+      state.isLoginModalOpen = true;
+    },
+    closeLoginModal: (state) => {
+      state.isLoginModalOpen = false;
+    },
     logout: (state) => {
       // Clear the state and localStorage on logout
       state.userInfo = null;
@@ -61,5 +68,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logout , openLoginModal, closeLoginModal } = authSlice.actions;
 export default authSlice.reducer;

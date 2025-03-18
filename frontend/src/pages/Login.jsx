@@ -11,26 +11,66 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useSelector,useDispatch } from "react-redux";
+import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import Logo from "./Logo";
-
-
-const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
+import { closeLoginModal } from "../redux/features/auth/authSlice";
+import { setCredentials } from "../redux/features/auth/authSlice";
+import { toast } from 'react-hot-toast';
+const LoginModal = ({ }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({ identifier: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading, isError, error:loginError, isSuccess }] = useLoginMutation();
   const [error, setError] = useState(null);
-
+  const { isLoginModalOpen } = useSelector((state) => state.auth); 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const handleLogin = async (formData) => {
+    console.log("formdata login", formData);
+    const loginData = {
+      password: formData.password,
+    };
 
+    // Dynamically determine whether input is an email or username
+    if (formData.identifier.includes("@")) {
+      loginData.email = formData.identifier; // Email case
+    } else {
+      loginData.username = formData.identifier; // Username case
+    }
+
+    try {
+      const response = await login(loginData).unwrap();
+      if (response.statusCode === 200) {
+        toast.success('User Logged in Successfully!', {
+          duration: 4000,   // Duration of the toast
+          position: 'top-right',  // Position of the toast
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontWeight: 'bold',
+          },
+        });
+        dispatch(closeLoginModal());
+        setError(null)
+        dispatch(setCredentials({ ...response }));
+      }
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError(err.message || "An error occurred while logging in");
+    }
+  };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    console.log("triggered");
+    
     setError(null); 
     try {
-        if (onSubmit) {
-           await onSubmit(formData);
-          }
-      handleClose(); // Close modal on success
+      
+           await handleLogin(formData);
+          
+      // Close modal on success
     } catch (err) {
         setError(err); 
       console.error("Login Error:", err);
@@ -38,7 +78,11 @@ const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={isLoginModalOpen} onClose={() => {
+      dispatch(closeLoginModal());
+      setError(null); // Reset error state when modal is closed
+    }}
+    >
     
       <Box
         className="bg-white p-6 rounded-2xl shadow-2xl max-w-md mx-auto mt-20 max-h-[85vh] overflow-y-auto custom-scrollbar"
@@ -86,7 +130,7 @@ const LoginModal = ({isLoad, open, handleClose,onSubmit }) => {
             // disabled={isLoading}
           >
            
-            {isLoad ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
         </form>
    

@@ -191,7 +191,7 @@ import HeartIcon from "./HeartIcon";
 import Ratings from "./Ratings";
 import ProductTabs from "./ProductTabs";
 import { addToCart } from "../../redux/features/cart/cartSlice";
-
+import { openLoginModal } from "../../redux/features/auth/authSlice";
 const ProductDetails = () => {
   const { id: productId } = useParams();
   const navigate = useNavigate();
@@ -204,11 +204,20 @@ const ProductDetails = () => {
   const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
   console.log("product", product);
 
-  const { userInfo } = useSelector((state) => state.auth);
-
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  // console.log("product page",isAuthenticated);
+  
+ const { isLoginModalOpen } = useSelector((state) => state.auth); 
+ console.log(isLoginModalOpen,"modal login");
+ 
   const addToCartHandler = () => {
-    dispatch(addToCart({ ...product, qty }));
-    navigate("/cart");
+    // dispatch(addToCart({ ...product, qty }));
+    // navigate("/cart");
+    if(isAuthenticated){
+        navigate("/cart");
+    }else{
+      dispatch(openLoginModal())
+    }
   };
 
   return (
@@ -220,9 +229,9 @@ const ProductDetails = () => {
         <Message variant="danger">{error?.data?.message || error.message}</Message>
       ) : (
         <>
-          <div className="flex flex-row items-start justify-between p-4 mt-8">
+          <div className="flex flex-row items-start justify-evenly p-4 mt-8">
             {/* Left Section - Product Images */}
-            <div className="flex flex-col mr-8">
+            <div className="flex flex-col  items-end mr-8">
               <div className="w-full xl:w-100 lg:90 mb-4">
                 <img
                   src={selectedImage || product.images[0]}

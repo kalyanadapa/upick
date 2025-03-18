@@ -6,12 +6,16 @@ import "react-toastify/dist/ReactToastify.css";
 import NavHeader from "./pages/NavHeader";
 import Footer from "./pages/Footer";
 import ScrollToTop from "./pages/ScrollTop";
+import LoginModal from "./pages/Login";
+import { useSelector, } from "react-redux";
 const App = () => {
   const { data: categories, } = useFetchCategoriesQuery(); 
-  console.log("header",categories);
   
+  console.log("header",categories);
+  const isLoginModalOpen = useSelector((state) => state.auth.isLoginModalOpen);
   return (
     <>
+   {isLoginModalOpen && <LoginModal />}
     <ScrollToTop/>
       <ToastContainer />
    <NavHeader categories={categories?.data ||[]}/>

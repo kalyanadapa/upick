@@ -13,6 +13,7 @@ import { setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 import LoginModal from "./Login.jsx"
 import LogOutModal from "./LogOut.jsx"
+import { openLoginModal } from '../redux/features/auth/authSlice';
 export default function Header({categories}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -22,14 +23,13 @@ export default function Header({categories}) {
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-
-  
+  const { isLoginModalOpen } = useSelector((state) => state.auth); 
   const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   //console.log("userinfo",isAuthenticated);
   console.log("infor",isAuthenticated && userInfo?.data?.user?.isAdmin );
   // eslint-disable-next-line no-unused-vars
   const [register, { isLoading:isRegister }] = useRegisterMutation();
-  const [login, { isLoading, isError, error, isSuccess }] = useLoginMutation();
+
   // const categories = {
   //   men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
   //   women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
@@ -48,32 +48,7 @@ export default function Header({categories}) {
     avatar: null,
     coverImage: null,
   });
-  const handleLogin = async (formData)=>{
-    console.log("formdata login",formData);
-    const loginData = {
-      password: formData.password,
-    };
-
-    // Dynamically determine whether input is an email or username
-    if (formData.identifier.includes("@")) {
-      loginData.email = formData.identifier; // Email case
-    } else {
-      loginData.username = formData.identifier; // Username case
-    }
-    const response = await login(loginData).unwrap();
-    toast.success('User Logged in Successfully!', {
-      duration: 4000,   // Duration of the toast
-      position: 'top-right',  // Position of the toast
-      style: {
-        background: '#333',
-        color: '#fff',
-        fontWeight: 'bold',
-      },
-    });
-    
-    dispatch(setCredentials({ ...response }));
-    console.log("Login Successful:", response.data);
-  }
+ 
   const handleSignUp = async (formData) => {
     try {
       // Creating a FormData object for file uploads
@@ -123,7 +98,7 @@ export default function Header({categories}) {
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
         <Toolbar className="flex justify-between items-center ">
-          <LoginModal isLoad={isLoading} open={open} handleClose={() => setOpen(false)}  onSubmit={handleLogin}/>
+        
           {/* Logo */}
           <SignUpModal
         open={isModalOpen}
@@ -220,7 +195,7 @@ export default function Header({categories}) {
                 Welcome to Upick
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Please<Button onClick={() => setOpen(true)} className="text-blue-500 hover:underline">Sign In</Button> / 
+                Please<Button onClick={() => dispatch(openLoginModal())} className="text-blue-500 hover:underline">Sign In</Button> / 
                 <Button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:underline">Sign Up</Button>
               </p>
               </>}
