@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { Badge, InputBase,Button, AppBar, Toolbar, Container ,Box} from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
 import SignUpModal from './SignUp.jsx'
@@ -16,6 +17,7 @@ import LogOutModal from "./LogOut.jsx"
 import { openLoginModal } from '../redux/features/auth/authSlice';
 export default function Header({categories}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate=useNavigate();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false); 
@@ -23,6 +25,7 @@ export default function Header({categories}) {
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
+  const [redirectPath, setRedirectPath] = useState(null);
   const { isLoginModalOpen } = useSelector((state) => state.auth); 
   const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   //console.log("userinfo",isAuthenticated);
@@ -48,7 +51,13 @@ export default function Header({categories}) {
     avatar: null,
     coverImage: null,
   });
- 
+  useEffect(() => {
+    if (isAuthenticated && redirectPath) {
+      navigate(redirectPath === "bag" ? "/cart" : "/wishlist");
+      setRedirectPath(null); // Clear the stored path after navigation
+    }
+  }, [isAuthenticated, redirectPath, navigate]);
+  
   const handleSignUp = async (formData) => {
     try {
       // Creating a FormData object for file uploads
@@ -94,6 +103,16 @@ export default function Header({categories}) {
   const handleClose = () => {
     setOpenDialog(false);
   }
+  const handleBagOpen = (value) => {
+    if (isAuthenticated) {
+      // If user is authenticated, navigate immediately
+      navigate(value === "bag" ? "/cart" : "/wishlist");
+    } else {
+      // Store the clicked path and open login modal
+      setRedirectPath(value);
+      dispatch(openLoginModal());
+    }
+  };
   return (
     <AppBar position="sticky" sx={{ backgroundColor: 'white!important', boxShadow: 2 , overflow:'visible'}} className="z-50">
       <Container maxWidth="xl" sx={{ mx: 1, p: 0 }}>
@@ -210,22 +229,22 @@ export default function Header({categories}) {
                 </Badge>
                 <span className="text-xs mt-1">Dashboard</span>
               </div>
-            </Link></>): (<> <a href="/wishlist" className="text-gray-700 hover:text-gray-900">
+            </Link></>): (<> <span onClick={()=>handleBagOpen("wishlist")} className="text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
                 <Badge badgeContent={0} color="error">
                   <Favorite className="h-6 w-6" />
                 </Badge>
                 <span className="text-xs mt-1">Wishlist</span>
               </div>
-            </a>
-            <a href="/bag" className="text-gray-700 hover:text-gray-900">
+            </span>
+            <span onClick={()=>handleBagOpen("bag")} className="text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
                 <Badge badgeContent={0} color="error">
                   <ShoppingBag className="h-6 w-6" />
                 </Badge>
                 <span className="text-xs mt-1">Bag</span>
               </div>
-            </a></>)}
+            </span></>)}
            
           </div>
         </Toolbar>
