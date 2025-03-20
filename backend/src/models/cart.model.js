@@ -11,6 +11,7 @@ const cartSchema = new mongoose.Schema({
   items: [cartItemSchema],
   shippingAddress: { type: String, default: '' },
   paymentMethod: { type: String, default: 'PayPal' },
-});
+},
+{ timestamps: true } );
 
-module.exports = mongoose.model('Cart', cartSchema);
+export default mongoose.model("Cart", cartSchema);

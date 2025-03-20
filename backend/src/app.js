@@ -28,6 +28,7 @@ import dashboardRouter from "./routes/dashboard.routes.js"
 import categoryRouter from './routes/category.routes.js'
 import productRouter from './routes/product.routes.js'
 import brandRouter from "./routes/brand.routes.js"
+import cartRouter from "./routes/cart.routes.js"
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Server is running successfully!" });
 });
@@ -64,6 +65,7 @@ app.use("/api/v1/comments", commentRouter)
 app.use("/api/v1/likes", likeRouter)
 app.use("/api/v1/playlist", playlistRouter)
 app.use("/api/v1/dashboard", dashboardRouter)
+app.use("/api/v1/cart",cartRouter)
 app.use(globalErrorHandler);
 // http://localhost:8000/api/v1/users/register
 

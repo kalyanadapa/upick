@@ -176,7 +176,7 @@
 
 
 
-
+import axios from "axios";
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -210,16 +210,37 @@ const ProductDetails = () => {
  const { isLoginModalOpen } = useSelector((state) => state.auth); 
  console.log(isLoginModalOpen,"modal login");
  
-  const addToCartHandler = () => {
-    // dispatch(addToCart({ ...product, qty }));
-    // navigate("/cart");
-    if(isAuthenticated){
-        navigate("/cart");
-    }else{
-      dispatch(openLoginModal())
+  // const addToCartHandler = () => {
+  //   // dispatch(addToCart({ ...product, qty }));
+  //   // navigate("/cart");
+  //   if(isAuthenticated){
+  //       navigate("/cart");
+  //   }else{
+  //     dispatch(openLoginModal())
+  //   }
+  // };
+  const addToCartHandler = async () => {
+    if (!isAuthenticated) {
+      dispatch(openLoginModal());
+      return;
+    }
+  
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/api/v1/cart", // Backend API endpoint
+        { 
+          productId: product._id, 
+          quantity: qty 
+        },
+        { withCredentials: true } // Ensure JWT token is sent via cookies
+      );
+  
+      dispatch(addToCart(data)); // Dispatch Redux action with API response
+      toast.success("Item added to cart successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add item to cart");
     }
   };
-
   return (
     <>
       <BasicBreadcrumbs />
