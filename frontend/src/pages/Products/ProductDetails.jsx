@@ -234,9 +234,9 @@ const ProductDetails = () => {
         },
         { withCredentials: true } // Ensure JWT token is sent via cookies
       );
-  
+    
       dispatch(addToCart(data)); // Dispatch Redux action with API response
-      toast.success("Item added to cart successfully!");
+      toast.success(data.message);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add item to cart");
     }

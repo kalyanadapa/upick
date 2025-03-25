@@ -28,8 +28,8 @@ export const addToCart = asyncHandler(async (req, res) => {
         const existingItemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
 
         if (existingItemIndex !== -1) {
-            // If product exists, update quantity
-            cart.items[existingItemIndex].quantity += quantity;
+            // If product exists, send response without updating quantity
+            return res.status(200).json(new ApiResponse(200, cart, "Product is already in the cart"));
         } else {
             // If product doesn't exist, add it
             cart.items.push({ productId, quantity, price: product.price });
@@ -42,6 +42,7 @@ export const addToCart = asyncHandler(async (req, res) => {
     // Send response using ApiResponse class
     res.status(200).json(new ApiResponse(200, cart, "Product added to cart successfully"));
 });
+
 export const getCartProducts = asyncHandler(async (req, res) => {
     const userId = req.user._id; // Get authenticated user ID
     console.log("User ID: ", userId); // Log userId
