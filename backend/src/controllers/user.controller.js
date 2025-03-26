@@ -5,7 +5,7 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
-
+import Cart from "../models/cart.model.js"
 const getAllUsers = asyncHandler(async (req, res) => {
     // Fetch all users from the database
     const users = await User.find().select("-password -refreshToken"); // Exclude sensitive data like password and refreshToken
@@ -223,7 +223,8 @@ const loginUser = asyncHandler(async (req, res) =>{
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-
+    const cart = await Cart.findOne({ userId: user._id });
+    const cartCount = cart ? cart.items.length : 0; 
     const options = {
         httpOnly: true,
         secure: true,
@@ -239,7 +240,7 @@ const loginUser = asyncHandler(async (req, res) =>{
         new ApiResponse(
             200, 
             {
-                user: loggedInUser, accessToken, refreshToken
+                user: loggedInUser, accessToken, refreshToken,cartCount
             },
             "User logged In Successfully"
         )
@@ -394,15 +395,22 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
 })
 
 
-const getCurrentUser = asyncHandler(async(req, res) => {
+const getCurrentUser = asyncHandler(async (req, res) => {
+    // Fetch the user's cart and calculate the cart count
+    const cart = await Cart.findOne({ userId: req.user._id });
+    const cartCount = cart ? cart.items.length : 0; // Count unique products in the cart
+
     return res
-    .status(200)
-    .json(new ApiResponse(
-        200,
-        req.user,
-        "User fetched successfully"
-    ))
-})
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            { 
+                user: req.user,
+                cartCount,  // Added cartCount here
+            },
+            "User fetched successfully"
+        ));
+});
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
     const {fullName, email} = req.body

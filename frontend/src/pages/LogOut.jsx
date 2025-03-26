@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useLogoutMutation } from "../redux/api/usersApiSlice";
-import { logout } from "../redux/features/auth/authSlice";
+import { logout,setCartCount } from "../redux/features/auth/authSlice";
 import { useNavigate } from 'react-router';
 import { useDispatch } from "react-redux";
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -20,6 +20,7 @@ export default function LogOut({ open, handleClose }) {
         try {
           await logoutApiCall().unwrap();
           dispatch(logout());
+          dispatch(setCartCount(0))
           handleClose()
           navigate("/"); 
         } catch (error) {

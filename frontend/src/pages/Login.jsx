@@ -15,7 +15,7 @@ import { useSelector,useDispatch } from "react-redux";
 import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import Logo from "./Logo";
 import { closeLoginModal } from "../redux/features/auth/authSlice";
-import { setCredentials } from "../redux/features/auth/authSlice";
+import { setCredentials , setCartCount } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 const LoginModal = ({ }) => {
   const dispatch = useDispatch();
@@ -52,6 +52,7 @@ const LoginModal = ({ }) => {
             fontWeight: 'bold',
           },
         });
+        dispatch(setCartCount(response?.data?.cartCount|| 0))
         dispatch(closeLoginModal());
         setError(null)
         dispatch(setCredentials({ ...response }));

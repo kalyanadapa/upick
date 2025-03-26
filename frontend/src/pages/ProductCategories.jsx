@@ -68,7 +68,7 @@ export default function ProductCategories() {
     {
       skip: !isAuthenticated, // Skip the query if the user is not authenticated
     });
-  console.log("user",user);
+  // console.log("user",user);
   // useEffect(() => {
   //   // Function to fetch the current user, including access token in cookies
   //   const getCurrentUser = async () => {

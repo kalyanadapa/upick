@@ -9,8 +9,8 @@ import SignUpModal from './SignUp.jsx'
 import { Link } from 'react-router';
 import Logo from './Logo.jsx';
 import { useSelector, useDispatch } from "react-redux";
-import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
-import { setCredentials } from "../redux/features/auth/authSlice";
+import { useRegisterMutation , useLoginMutation,useGetCurrentUserQuery} from "../redux/api/usersApiSlice.js";
+import { setCartCount, setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 import LoginModal from "./Login.jsx"
 import LogOutModal from "./LogOut.jsx"
@@ -28,11 +28,21 @@ export default function Header({categories}) {
   const [redirectPath, setRedirectPath] = useState(null);
   const { isLoginModalOpen } = useSelector((state) => state.auth); 
   const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
+  const cartCount = useSelector((state)=>state.auth.cartCount)
   //console.log("userinfo",isAuthenticated);
   console.log("infor",isAuthenticated && userInfo?.data?.user?.isAdmin );
   // eslint-disable-next-line no-unused-vars
   const [register, { isLoading:isRegister }] = useRegisterMutation();
-
+  const { data: userData, error:userError, isLoading: userIsLoading } = useGetCurrentUserQuery( null, 
+    {
+      skip: !isAuthenticated, // Skip the query if the user is not authenticated
+    });
+  
+  
+  useEffect(()=>{
+    if(userData) dispatch(setCartCount(userData.data.cartCount))
+  },[userData,dispatch])
+    
   // const categories = {
   //   men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
   //   women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
@@ -239,7 +249,7 @@ export default function Header({categories}) {
             </span>
             <span onClick={()=>handleBagOpen("bag")} className="text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
-                <Badge badgeContent={0} color="error">
+                <Badge badgeContent={cartCount} color="error">
                   <ShoppingBag className="h-6 w-6" />
                 </Badge>
                 <span className="text-xs mt-1">Bag</span>
