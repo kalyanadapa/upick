@@ -7,26 +7,27 @@ export const cartApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `${CART_URL}`,
         method: "GET",
-        credentials: "include", // 👈 Include only for this one
+        credentials: "include",
       }),
       providesTags: ["Cart"],
     }),
-   
+
     addToCart: builder.mutation({
       query: (item) => ({
         url: `${CART_URL}`,
         method: "POST",
         body: item,
-        credentials: "include", // 👈 Include only where needed
+        credentials: "include",
       }),
       invalidatesTags: ["Cart"],
     }),
 
     removeFromCart: builder.mutation({
       query: (productId) => ({
-        url: `${CART_URL}/remove/${productId}`,
+        url: `${CART_URL}`,
         method: "DELETE",
-        credentials: "include", // 👈 Include only where needed
+        body: { productId },
+        credentials: "include",
       }),
       invalidatesTags: ["Cart"],
     }),

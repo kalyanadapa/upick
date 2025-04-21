@@ -97,3 +97,35 @@ export const getCartProducts = asyncHandler(async (req, res) => {
         return res.status(500).json(new ApiResponse(500, [], "Internal Server Error"));
     }
 });
+
+
+export const removeFromCart = asyncHandler(async (req, res) => {
+    const userId = req.user._id; // Ensure `req.user` is populated
+    const { productId } = req.body; // ✅ Get productId from body
+
+    // Validate if productId is passed
+    if (!productId) {
+        throw new ApiError(400, "Product ID is required");
+    }
+
+    // Find the user's cart
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+        throw new ApiError(404, "Cart not found");
+    }
+
+    // Ensure that the item exists in the cart before attempting to remove
+    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+    if (itemIndex === -1) {
+        return res.status(404).json(new ApiResponse(404, cart, "Product not found in cart"));
+    }
+
+    // Remove the product from the cart
+    cart.items.splice(itemIndex, 1); // Use splice to directly remove item
+
+    await cart.save();
+
+    res.status(200).json(new ApiResponse(200, cart, "Product removed from cart successfully"));
+});
+

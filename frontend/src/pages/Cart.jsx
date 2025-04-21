@@ -134,10 +134,11 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
-import { useGetCartQuery } from "../redux/api/cartApiSlice";
+import { useGetCartQuery , useRemoveFromCartMutation} from "../redux/api/cartApiSlice";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const [removeFromCart] = useRemoveFromCartMutation();
 
   const {
     data: cartData,
@@ -153,8 +154,13 @@ const Cart = () => {
 
   const cartItems = cartData?.data || [];
 
-  const removeFromCartHandler = (productId) => {
-    console.log("Removed product with ID:", productId);
+  const handleRemoveFromCart = async (productId) => {
+    try {
+      await removeFromCart(productId).unwrap(); // Call mutation with productId
+      // Optionally, you can refetch or update UI manually after removing the product
+    } catch (err) {
+      console.error("Error removing product from cart:", err);
+    }
   };
 
   const checkoutHandler = () => {
@@ -214,7 +220,7 @@ const Cart = () => {
               <div>
                 <button
                   className="text-red-500 mr-[5rem]"
-                  onClick={() => removeFromCartHandler(item._id)}
+                  onClick={() => handleRemoveFromCart(item.productId)} 
                 >
                   <FaTrash className="ml-[1rem] mt-[.5rem]" />
                 </button>
