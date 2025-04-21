@@ -180,6 +180,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import BasicBreadcrumbs from "../../components/BreadCrumbs";
+import { useAddToCartMutation } from "../../redux/api/cartApiSlice";
 import {
   useGetProductDetailsQuery,
   useCreateReviewMutation,
@@ -206,7 +207,7 @@ const ProductDetails = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const [addToCartApi, { isLoading: isAdding }] = useAddToCartMutation();
   const {
     data: product,
     isLoading,
@@ -221,37 +222,23 @@ const ProductDetails = () => {
   const { isLoginModalOpen } = useSelector((state) => state.auth);
   console.log(isLoginModalOpen, "modal login");
 
-  // const addToCartHandler = () => {
-  //   // dispatch(addToCart({ ...product, qty }));
-  //   // navigate("/cart");
-  //   if(isAuthenticated){
-  //       navigate("/cart");
-  //   }else{
-  //     dispatch(openLoginModal())
-  //   }
-  // };
+ 
   const addToCartHandler = async () => {
     if (!isAuthenticated) {
       dispatch(openLoginModal());
       return;
     }
-
+  
     try {
-      const { data } = await axios.post(
-        "http://localhost:8000/api/v1/cart", // Backend API endpoint
-        {
-          productId: product._id,
-          quantity: qty,
-        },
-        { withCredentials: true } // Ensure JWT token is sent via cookies
-      );
-
-      dispatch(addToCart(data)); // Dispatch Redux action with API response
-      toast.success(data.message);
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to add item to cart"
-      );
+      const res = await addToCartApi({
+        productId: product._id,
+        quantity: qty,
+      }).unwrap();
+  
+      dispatch(addToCart(res)); // optional — only if you're using a local cart slice
+      toast.success(res.message || "Item added to cart");
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to add item to cart");
     }
   };
   return (
