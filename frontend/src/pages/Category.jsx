@@ -12,6 +12,8 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const { data: categories, isLoading } = useFetchCategoriesQuery();
   const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [priceTouched, setPriceTouched] = useState(false);
+
   const debouncedPriceRange = useDebounce(priceRange, 800);
   // State for selected category
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,12 +54,18 @@ const CategoryPage = () => {
       setSelectedSubCategories([subCategoryId]); // Pre-select subcategory from URL
     }
   }, [subCategoryId]);
-  const { data: products, isError, isFetching,refetch } = useGetProductsByCategoryQuery(
-    { categoryId: selectedCat._id, subCategoryIds: selectedSubCategories,
-      minPrice: debouncedPriceRange[0],
-      maxPrice: debouncedPriceRange[1], }, 
+  const { data: products, isError, isFetching, refetch } = useGetProductsByCategoryQuery(
+    {
+      categoryId: selectedCat._id,
+      subCategoryIds: selectedSubCategories,
+      ...(priceTouched && {
+        minPrice: debouncedPriceRange[0],
+        maxPrice: debouncedPriceRange[1],
+      }),
+    },
     { skip: !selectedCat._id }
   );
+  
 useEffect(() => {
   if (selectedCat._id) {
     refetch();
@@ -91,13 +99,15 @@ console.log("selected",selectedCategory);
   const handleCategoryChange = (event) => {
     const newCategory = event.target.value;
     setSelectedCategory(newCategory);
-    setSelectedSubCategories([]); // Reset subcategories when category changes
+    setSelectedSubCategories([]);
     setPriceRange([0, 10000]);
-     const updatedSearchParams = new URLSearchParams(searchParams);
-  updatedSearchParams.delete("minPrice");
-  updatedSearchParams.delete("maxPrice");
+    setPriceTouched(false); // ✅ Reset the touched state
+    const updatedSearchParams = new URLSearchParams(searchParams);
+    updatedSearchParams.delete("minPrice");
+    updatedSearchParams.delete("maxPrice");
     navigate(`/category/${newCategory.toLowerCase()}`);
   };
+  
 
   // Handle subcategory selection
   const handleSubCategoryChange = (event) => {
@@ -122,16 +132,16 @@ console.log("selected",selectedCategory);
   };
   
   const handlePriceChange = (event, newValue) => {
+    console.log(newValue);
+    
     setPriceRange(newValue);
+    setPriceTouched(true); // ✅ Mark it as touched
     const updatedSearchParams = new URLSearchParams(searchParams);
-
-  // Update or add the minPrice and maxPrice parameters
-  updatedSearchParams.set('minPrice', newValue[0]);
-  updatedSearchParams.set('maxPrice', newValue[1]);
-
-  // Set the new search params, keeping any other existing parameters intact
-  setSearchParams(updatedSearchParams);
+    updatedSearchParams.set('minPrice', newValue[0]);
+    updatedSearchParams.set('maxPrice', newValue[1]);
+    setSearchParams(updatedSearchParams);
   };
+  
 
   // Log selections to the console
  useEffect(()=>{
