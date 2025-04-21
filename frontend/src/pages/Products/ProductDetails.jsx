@@ -174,20 +174,26 @@
 
 // export default ProductDetails;
 
-
-
 import axios from "axios";
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import BasicBreadcrumbs from "../../components/BreadCrumbs";
-import { useGetProductDetailsQuery, useCreateReviewMutation } from "../../redux/api/productApiSlice";
+import {
+  useGetProductDetailsQuery,
+  useCreateReviewMutation,
+} from "../../redux/api/productApiSlice";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
-import { FaBox, FaClock, FaShoppingCart, FaStar, FaStore } from "react-icons/fa";
+import {
+  FaBox,
+  FaClock,
+  FaShoppingCart,
+  FaStar,
+  FaStore,
+} from "react-icons/fa";
 import moment from "moment";
-import HeartIcon from "./HeartIcon";
 import Ratings from "./Ratings";
 import ProductTabs from "./ProductTabs";
 import { addToCart } from "../../redux/features/cart/cartSlice";
@@ -201,15 +207,20 @@ const ProductDetails = () => {
   const [comment, setComment] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
+  const {
+    data: product,
+    isLoading,
+    refetch,
+    error,
+  } = useGetProductDetailsQuery(productId);
   console.log("product", product);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   // console.log("product page",isAuthenticated);
-  
- const { isLoginModalOpen } = useSelector((state) => state.auth); 
- console.log(isLoginModalOpen,"modal login");
- 
+
+  const { isLoginModalOpen } = useSelector((state) => state.auth);
+  console.log(isLoginModalOpen, "modal login");
+
   // const addToCartHandler = () => {
   //   // dispatch(addToCart({ ...product, qty }));
   //   // navigate("/cart");
@@ -224,21 +235,23 @@ const ProductDetails = () => {
       dispatch(openLoginModal());
       return;
     }
-  
+
     try {
       const { data } = await axios.post(
         "http://localhost:8000/api/v1/cart", // Backend API endpoint
-        { 
-          productId: product._id, 
-          quantity: qty 
+        {
+          productId: product._id,
+          quantity: qty,
         },
         { withCredentials: true } // Ensure JWT token is sent via cookies
       );
-    
+
       dispatch(addToCart(data)); // Dispatch Redux action with API response
       toast.success(data.message);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add item to cart");
+      toast.error(
+        error.response?.data?.message || "Failed to add item to cart"
+      );
     }
   };
   return (
@@ -247,19 +260,22 @@ const ProductDetails = () => {
       {isLoading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error?.data?.message || error.message}</Message>
+        <Message variant="danger">
+          {error?.data?.message || error.message}
+        </Message>
       ) : (
         <>
           <div className="flex flex-row items-start justify-evenly p-4 mt-8">
             {/* Left Section - Product Images */}
             <div className="flex flex-col  items-end mr-8">
-              <div className="w-full xl:w-100 lg:90 mb-4">
+              <div className="w-full h-full  mb-4">
                 <img
                   src={selectedImage || product.images[0]}
                   alt={product.name}
-                  className="w-full h-auto rounded-lg "
+                  className="max-w-[500px] h-[500px] object-cover rounded-lg"
                 />
               </div>
+
               {/* Thumbnail Images */}
               <div className="grid grid-cols-4 gap-2">
                 {product.images.map((img, index) => (
@@ -272,7 +288,7 @@ const ProductDetails = () => {
                   />
                 ))}
               </div>
-              <HeartIcon product={product} />
+            
             </div>
 
             {/* Right Section - Product Details */}
@@ -284,30 +300,39 @@ const ProductDetails = () => {
               <div className="flex items-start justify-between w-full">
                 <div>
                   <h1 className="flex items-center mb-4">
-                    <FaStore className="mr-2 text-gray-700" /> Brand: {product.brand.name}
+                    <FaStore className="mr-2 text-gray-700" /> Brand:{" "}
+                    {product.brand.name}
                   </h1>
                   <h1 className="flex items-center mb-4">
-                    <FaClock className="mr-2 text-gray-700" /> Added: {moment(product.createAt).fromNow()}
+                    <FaClock className="mr-2 text-gray-700" /> Added:{" "}
+                    {moment(product.createAt).fromNow()}
                   </h1>
                   <h1 className="flex items-center mb-4">
-                    <FaStar className="mr-2 text-gray-700" /> Reviews: {product.numReviews}
+                    <FaStar className="mr-2 text-gray-700" /> Reviews:{" "}
+                    {product.numReviews}
                   </h1>
                 </div>
                 <div>
                   <h1 className="flex items-center mb-4">
-                    <FaStar className="mr-2 text-gray-700" /> Ratings: {product.rating}
+                    <FaStar className="mr-2 text-gray-700" /> Ratings:{" "}
+                    {product.rating}
                   </h1>
                   <h1 className="flex items-center mb-4">
-                    <FaShoppingCart className="mr-2 text-gray-700" /> Quantity: {product.quantity}
+                    <FaShoppingCart className="mr-2 text-gray-700" /> Quantity:{" "}
+                    {product.quantity}
                   </h1>
                   <h1 className="flex items-center mb-4">
-                    <FaBox className="mr-2 text-gray-700" /> In Stock: {product.countInStock}
+                    <FaBox className="mr-2 text-gray-700" /> In Stock:{" "}
+                    {product.countInStock}
                   </h1>
                 </div>
               </div>
 
               <div className="flex justify-between flex-wrap">
-                <Ratings value={product.rating} text={`${product.numReviews} reviews`} />
+                <Ratings
+                  value={product.rating}
+                  text={`${product.numReviews} reviews`}
+                />
                 {product.countInStock > 0 && (
                   <select
                     value={qty}
