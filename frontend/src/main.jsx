@@ -36,6 +36,7 @@ import OrderList from "./pages/Admin/OrderList.jsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import Category from './pages/Category.jsx'
+import Wishlist from "./pages/User/Wishlist.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -45,6 +46,7 @@ const router = createBrowserRouter(
       <Route path="/favorite" element={<Favorites />} />
       <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/category/:categoryName" element={<Category />} />
       {/* Registered users */}
