@@ -41,15 +41,15 @@ export const productApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
     }),
 
-    // createProduct: builder.mutation({
-    //   query: (productData) => ({
-    //     url: `${PRODUCT_URL}`,
-    //     method: "POST",
-    //     body: productData,
-    //   }),
-    //   invalidatesTags: ["Product"],
-    // }),
-
+    createProduct: builder.mutation({
+      query: (formData) => ({
+        url: `${PRODUCT_URL}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Products"],
+    }),
+    
     // updateProduct: builder.mutation({
     //   query: ({ productId, formData }) => ({
     //     url: `${PRODUCT_URL}/${productId}`,
