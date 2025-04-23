@@ -62,7 +62,7 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
-
+userSchema.index({ wishlist: 1 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -97,6 +97,7 @@ userSchema.methods.generateRefreshToken = function () {
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     }
+    
   );
 };
 

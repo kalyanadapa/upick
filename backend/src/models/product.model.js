@@ -85,6 +85,14 @@ const productSchema = mongoose.Schema(
     discountPrice: { type: Number, default: null }, // Now optional
     discountPercentage: { type: Number, required: true, default: 0 }, // Auto-calculated
     countInStock: { type: Number, required: true, default: 0 },
+    is_liked: { type: Boolean, default: false },
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    
     type: { 
       type: String, 
       required: true, 
@@ -93,7 +101,7 @@ const productSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
+productSchema.index({ wishlist: 1 });
 // 🔹 Middleware to calculate discountPercentage before saving
 productSchema.pre("save", function (next) {
   if (!this.discountPrice || this.discountPrice >= this.price) {
