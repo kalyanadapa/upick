@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
-import { Button, TextField, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl,Slider, FormLabel, Checkbox, CircularProgress } from "@mui/material";
+import { Button, Typography, Box, Radio, RadioGroup, FormControlLabel, FormControl,Slider,  Checkbox, CircularProgress } from "@mui/material";
 import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
 import { useDebounce } from "../Utils/customDebounce";
@@ -22,7 +22,7 @@ const CategoryPage = () => {
    // State for selected subcategories
    const [selectedSubCategories, setSelectedSubCategories] = useState([]);
    // State for price filter
-   const [priceFilter, setPriceFilter] = useState("");
+  //  const [priceFilter, setPriceFilter] = useState("");
    // Get subcategory ID from query params
    const queryParams = new URLSearchParams(search);
    const subCategoryId = queryParams.get("sub_category");
@@ -74,25 +74,7 @@ useEffect(() => {
   // Find the selected category in the API data
   const selectedCategoryData = categories?.data?.find((cat) => cat.name.toLowerCase() === selectedCategory.toLowerCase());
 console.log("selected",selectedCategory);
-// useEffect(() => {
-//   const getAll = async () => {
-//     try {
-//       const categoryId = selectedCat._id; // or get it from state, depending on how your app is structured
 
-//       // Make the API call with categoryId
-//       const response = await axios.get(`http://localhost:8000/api/v1/product/all_products?category=${categoryId}`);
-// console.log("resp",response);
-
-//     } catch (error) {
-//       console.error("Error fetching products:", error);
-//     }
-//   };
-
-//   if (categoryName) {
-//     getAll();
-//   }
-// }, [selectedCat])
-  // Get subcategories of the selected category
   const availableSubCategories = selectedCategoryData ? selectedCategoryData.subcategories : [];
  
   
@@ -101,7 +83,7 @@ console.log("selected",selectedCategory);
     setSelectedCategory(newCategory);
     setSelectedSubCategories([]);
     setPriceRange([0, 10000]);
-    setPriceTouched(false); // ✅ Reset the touched state
+    setPriceTouched(false); 
     const updatedSearchParams = new URLSearchParams(searchParams);
     updatedSearchParams.delete("minPrice");
     updatedSearchParams.delete("maxPrice");
