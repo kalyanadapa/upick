@@ -5,8 +5,10 @@ import { Button, Typography, Box, Radio, RadioGroup, FormControlLabel, FormContr
 import { useGetProductsByCategoryQuery } from "../redux/api/productApiSlice";
 import ProductCard from "./Products/ProductCard";
 import { useDebounce } from "../Utils/customDebounce";
+import { useSelector } from "react-redux";
 const CategoryPage = () => {
   const { categoryName } = useParams();
+    const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   // const { data: products, isError } = useAllProductsQuery();
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -70,7 +72,7 @@ useEffect(() => {
   if (selectedCat._id) {
     refetch();
   }
-}, [selectedCat, refetch]);
+}, [selectedCat, refetch,isAuthenticated]);
   // Find the selected category in the API data
   const selectedCategoryData = categories?.data?.find((cat) => cat.name.toLowerCase() === selectedCategory.toLowerCase());
 console.log("selected",selectedCategory);

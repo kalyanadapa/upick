@@ -2,11 +2,13 @@ import mongoose from "mongoose"
 import Product from "../models/product.model.js";
 import Brand from "../models/brand.model.js"
 import Category from "../models/category.model.js"
+import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { productTypes } from "../config/ProductTypes.js";
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import jwt from "jsonwebtoken"
 // Get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.find()
@@ -160,66 +162,136 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 // Get a product by ID
 
+// export const getAllProductsByCategory = asyncHandler(async (req, res) => {
+//   const { category, subcategories, minPrice, maxPrice } = req.query;
+
+//   let query = {};
+
+//   // Case 1: If category is provided, filter by category
+//   if (category) {
+//     query.category = category;  // Ensure this is a field in the Product model
+//   }
+
+//   // Case 2: If subcategories are provided, convert it from string to an array
+//   let subcategoryIds = [];
+//   if (subcategories) {
+//     subcategoryIds = subcategories.split(",").map(id => id.trim()); // Convert "1,2,3" -> ["1", "2", "3"]
+//   }
+
+//   // If subcategories exist, validate them against the category
+//   if (subcategoryIds.length > 0) {
+//     if (!category) {
+//       return res.status(400).json(new ApiError(400, "Category must be provided to filter by subcategories"));
+//     }
+
+//     // Find the category first and get its subcategories
+//     const parentCategory = await Category.findById(category);
+//     if (!parentCategory) {
+//       return res.status(404).json(new ApiError(404, "Category not found"));
+//     }
+
+//     // Ensure provided subcategories belong to this category
+//     const validSubcategoryIds = parentCategory.subcategories.map(sub => sub._id.toString());
+//     const invalidSubcategories = subcategoryIds.filter(id => !validSubcategoryIds.includes(id));
+
+//     if (invalidSubcategories.length > 0) {
+//       return res.status(400).json(new ApiError(400, `Some subcategories are not related to the provided category: ${invalidSubcategories}`));
+//     }
+
+//     query["subcategory._id"] = { $in: subcategoryIds.map(id => new mongoose.Types.ObjectId(id)) };
+//   }
+
+//   // Case 3: If price filters (minPrice, maxPrice) are provided, add them to the query
+//   if (minPrice || maxPrice) {
+//     query.price = {}; // Ensure this is a field in the Product model
+
+//     if (minPrice) {
+//       query.price.$gte = parseFloat(minPrice); // Greater than or equal to minPrice
+//     }
+
+//     if (maxPrice) {
+//       query.price.$lte = parseFloat(maxPrice); // Less than or equal to maxPrice
+//     }
+//   }
+
+//   // Fetch products based on the constructed query
+//   const products = await Product.find(query)
+//     .populate({
+//       path: "category",
+//       select: "_id name", // Populating the category field from the Category model
+//     }).sort({ price: 1 });
+
+//   return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"));
+// });
 export const getAllProductsByCategory = asyncHandler(async (req, res) => {
-  const { category, subcategories, minPrice, maxPrice } = req.query;
+  try {
+    const { category, subcategories, minPrice, maxPrice } = req.query;
 
-  let query = {};
+    let query = {};
+    if (category) query.category = category;
 
-  // Case 1: If category is provided, filter by category
-  if (category) {
-    query.category = category;  // Ensure this is a field in the Product model
+    if (subcategories) {
+      const subcategoryIds = subcategories.split(",").map(id => id.trim());
+
+      if (!category) {
+        return res.status(400).json({ error: "Category must be provided with subcategories" });
+      }
+
+      const parentCategory = await Category.findById(category);
+      if (!parentCategory) return res.status(404).json({ error: "Category not found" });
+
+      const validSubIds = parentCategory.subcategories.map(sub => sub._id.toString());
+      const invalid = subcategoryIds.filter(id => !validSubIds.includes(id));
+      if (invalid.length > 0) {
+        return res.status(400).json({ error: `Invalid subcategories: ${invalid}` });
+      }
+
+      query["subcategory._id"] = { $in: subcategoryIds.map(id => new mongoose.Types.ObjectId(id)) };
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseFloat(minPrice);
+      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+    }
+
+    const products = await Product.find(query)
+      .populate("category", "_id name")
+      .sort({ price: 1 })
+      .lean();
+
+    let updatedProducts = products;
+    const token = req.cookies?.accessToken;
+    let userId = null;
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        userId = decoded._id;
+        const user = await User.findById(userId).select("wishlist");
+
+        if (user) {
+          updatedProducts = products.map(prod => ({
+            ...prod,
+            is_liked: user.wishlist.some(wishId => wishId.toString() === prod._id.toString())
+          }));
+        }
+      } catch (err) {
+        console.error("JWT error or user fetch failed:", err.message);
+      }
+    } else {
+      updatedProducts = products.map(prod => ({ ...prod, is_liked: false }));
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedProducts,
+      message: "Products fetched successfully"
+    });
+  } catch (err) {
+    console.error("Unhandled error in product fetch:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-
-  // Case 2: If subcategories are provided, convert it from string to an array
-  let subcategoryIds = [];
-  if (subcategories) {
-    subcategoryIds = subcategories.split(",").map(id => id.trim()); // Convert "1,2,3" -> ["1", "2", "3"]
-  }
-
-  // If subcategories exist, validate them against the category
-  if (subcategoryIds.length > 0) {
-    if (!category) {
-      return res.status(400).json(new ApiError(400, "Category must be provided to filter by subcategories"));
-    }
-
-    // Find the category first and get its subcategories
-    const parentCategory = await Category.findById(category);
-    if (!parentCategory) {
-      return res.status(404).json(new ApiError(404, "Category not found"));
-    }
-
-    // Ensure provided subcategories belong to this category
-    const validSubcategoryIds = parentCategory.subcategories.map(sub => sub._id.toString());
-    const invalidSubcategories = subcategoryIds.filter(id => !validSubcategoryIds.includes(id));
-
-    if (invalidSubcategories.length > 0) {
-      return res.status(400).json(new ApiError(400, `Some subcategories are not related to the provided category: ${invalidSubcategories}`));
-    }
-
-    query["subcategory._id"] = { $in: subcategoryIds.map(id => new mongoose.Types.ObjectId(id)) };
-  }
-
-  // Case 3: If price filters (minPrice, maxPrice) are provided, add them to the query
-  if (minPrice || maxPrice) {
-    query.price = {}; // Ensure this is a field in the Product model
-
-    if (minPrice) {
-      query.price.$gte = parseFloat(minPrice); // Greater than or equal to minPrice
-    }
-
-    if (maxPrice) {
-      query.price.$lte = parseFloat(maxPrice); // Less than or equal to maxPrice
-    }
-  }
-
-  // Fetch products based on the constructed query
-  const products = await Product.find(query)
-    .populate({
-      path: "category",
-      select: "_id name", // Populating the category field from the Category model
-    }).sort({ price: 1 });
-
-  return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"));
 });
 
 export const getProductById = asyncHandler(async (req, res) => {
