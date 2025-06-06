@@ -19,6 +19,7 @@
     "apexcharts": "^4.3.0",
     "axios": "^1.7.9",
     "flowbite": "^2.5.2",
+    "framer-motion": "^12.16.0",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-apexcharts": "^1.7.0",
