@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import BasicBreadcrumbs from "../../components/BreadCrumbs";
+// import BasicBreadcrumbs from "../../components/BreadCrumbs";
 import { useAddToCartMutation } from "../../redux/api/cartApiSlice";
 import {
   useGetProductDetailsQuery,
@@ -22,7 +22,7 @@ import Ratings from "./Ratings";
 import ProductTabs from "./ProductTabs";
 import { addToCart } from "../../redux/features/cart/cartSlice";
 import { openLoginModal } from "../../redux/features/auth/authSlice";
-import Skeleton from "react-loading-skeleton";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton"; // ✅
 import "react-loading-skeleton/dist/skeleton.css";
 import { motion } from "framer-motion";
 
@@ -66,23 +66,25 @@ const ProductDetails = () => {
 
   return (
     <>
-      <BasicBreadcrumbs />
+      {/* <BasicBreadcrumbs /> */}
       {isLoading ? (
-        <div className="flex flex-row items-start justify-evenly p-4 mt-8">
-          <div>
-            <Skeleton height={500} width={500} />
-            <div className="grid grid-cols-4 gap-2 mt-4">
-              {[1, 2, 3, 4].map((_, i) => (
-                <Skeleton key={i} height={80} width={80} />
-              ))}
-            </div>
-          </div>
-          <div className="max-w-xl w-full">
-            <Skeleton height={40} width={300} />
-            <Skeleton count={3} />
-            <Skeleton height={50} width={150} className="mt-4" />
-          </div>
+          <SkeletonTheme baseColor="#d4d4d4" highlightColor="#f0f0f0">
+    <div className="flex flex-row items-start justify-evenly p-4 mt-8">
+      <div>
+        <Skeleton height={500} width={500} />
+        <div className="grid grid-cols-4 gap-2 mt-4">
+          {[1, 2, 3, 4].map((_, i) => (
+            <Skeleton key={i} height={80} width={80} />
+          ))}
         </div>
+      </div>
+      <div className="max-w-xl w-full">
+        <Skeleton height={40} width={300} />
+        <Skeleton count={3} />
+        <Skeleton height={50} width={150} className="mt-4" />
+      </div>
+    </div>
+  </SkeletonTheme>
       ) : error ? (
         <Message variant="danger">
           {error?.data?.message || error.message}
