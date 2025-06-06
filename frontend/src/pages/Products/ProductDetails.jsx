@@ -68,7 +68,7 @@ const ProductDetails = () => {
     <>
       {/* <BasicBreadcrumbs /> */}
       {isLoading ? (
-          <SkeletonTheme baseColor="#d4d4d4" highlightColor="#f0f0f0">
+         <SkeletonTheme baseColor="#d4d4d4" highlightColor="#eeeeee">
     <div className="flex flex-row items-start justify-evenly p-4 mt-8">
       <div>
         <Skeleton height={500} width={500} />
