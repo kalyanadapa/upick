@@ -14,11 +14,11 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules"; // Fixed impo
 import ProductCategories from "./ProductCategories";
 
 const images = [
-  "https://res.cloudinary.com/dh0xxfq9y/image/upload/v1737971057/men_docgda.webp",
-  "https://res.cloudinary.com/dh0xxfq9y/image/upload/v1737971056/ttclq_pgqnux.webp",
-  "https://res.cloudinary.com/dh0xxfq9y/image/upload/v1737971056/cliq1_sdcdtq.webp",
+  "v1737971057/men_docgda.webp",
+  "v1737971056/ttclq_pgqnux.webp",
+  "v1737971056/cliq1_sdcdtq.webp",
 ];
-
+const cloudinaryUrl="https://res.cloudinary.com/dh0xxfq9y/image/upload/"
 // eslint-disable-next-line react/prop-types
 const SwiperCarousel = ({ images }) => {
   return (
@@ -35,7 +35,7 @@ const SwiperCarousel = ({ images }) => {
     >
       {images.map((image, index) => (
         <SwiperSlide key={index}>
-          <img src={image} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+          <img src={`${cloudinaryUrl}${image}`} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
         </SwiperSlide>
       ))}
     </Swiper>
