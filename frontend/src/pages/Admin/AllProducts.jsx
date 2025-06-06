@@ -33,7 +33,7 @@ const AllProducts = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="container mx-[9rem]"
+      className="container "
     >
       <div className="flex flex-col md:flex-row">
         <div className="p-3">
