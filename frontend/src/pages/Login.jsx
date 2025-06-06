@@ -44,7 +44,7 @@ const LoginModal = ({ }) => {
       const response = await login(loginData).unwrap();
       if (response.statusCode === 200) {
         toast.success('User Logged in Successfully!', {
-          duration: 4000,   // Duration of the toast
+          duration: 2500,   // Duration of the toast
           position: 'top-right',  // Position of the toast
           style: {
             background: '#333',
