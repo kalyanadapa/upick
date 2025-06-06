@@ -9,7 +9,9 @@ import { openLoginModal } from "../../redux/features/auth/authSlice";
 // eslint-disable-next-line react/prop-types
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const {userInfo, isAuthenticated } = useSelector((state) => state.auth);
+  const isAdmin = userInfo?.data?.user?.isAdmin
+  
     // const { isLoginModalOpen } = useSelector((state) => state.auth);
      const [addToCartApi, { isLoading: isAdding }] = useAddToCartMutation();
 const addToCartHandler = async () => {
@@ -97,13 +99,16 @@ const addToCartHandler = async () => {
               />
             </svg>
           </Link>
-          <span className="flex justify-between items-center">  <HeartIcon product={product} />
+          {!isAdmin && (<>
+             <span className="flex justify-between items-center">  <HeartIcon product={product} />
           <button
             className="p-2 rounded-full"
             onClick={() => addToCartHandler()}
           >
             <AiOutlineShoppingCart size={25} />
           </button></span>
+          </>)}
+       
         
         </section>
       </div>

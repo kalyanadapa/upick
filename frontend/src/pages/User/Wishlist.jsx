@@ -7,7 +7,7 @@ const Wishlist = () => {
     const fetchWishlist = async () => {
       try {
         const res = await axios.get("http://localhost:8000/api/v1/wishlist", {
-          withCredentials: true, // 👈 VERY IMPORTANT to include cookies
+          withCredentials: true, 
         });
 
         console.log("Wishlist:", res.data.wishlist);
