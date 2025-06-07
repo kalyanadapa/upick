@@ -1,6 +1,4 @@
 /* eslint-disable react/prop-types */
-
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Badge, InputBase,Button, AppBar, Toolbar, Container ,Box} from '@mui/material';
@@ -9,24 +7,21 @@ import SignUpModal from './SignUp.jsx'
 import { Link } from 'react-router';
 import Logo from './Logo.jsx';
 import { useSelector, useDispatch } from "react-redux";
-import { useRegisterMutation , useLoginMutation,useGetCurrentUserQuery} from "../redux/api/usersApiSlice.js";
+import { useRegisterMutation , useGetCurrentUserQuery} from "../redux/api/usersApiSlice.js";
 import { setCartCount, setCredentials } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
-import LoginModal from "./Login.jsx"
 import LogOutModal from "./LogOut.jsx"
 import { openLoginModal } from '../redux/features/auth/authSlice';
 export default function Header({categories}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate=useNavigate();
-  const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false); 
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  const [redirectPath, setRedirectPath] = useState(null);
-  const { isLoginModalOpen } = useSelector((state) => state.auth); 
+  const [redirectPath, setRedirectPath] = useState(null); 
   const isAuthenticated= useSelector((state)=>state.auth.isAuthenticated);
   const cartCount = useSelector((state)=>state.auth.cartCount)
   //console.log("userinfo",isAuthenticated);
@@ -43,13 +38,6 @@ export default function Header({categories}) {
     if(userData) dispatch(setCartCount(userData.data.cartCount))
   },[userData,dispatch])
     
-  // const categories = {
-  //   men: ['T-Shirts', 'Shirts', 'Jeans', 'Shoes'],
-  //   women: ['Dresses', 'Tops', 'Handbags', 'Shoes'],
-  //   kids: ['Toys', 'Clothing', 'Shoes', 'Accessories'],
-  //   'home-living': ['Bedsheets', 'Cushions', 'Furniture', 'Decor'],
-  //   beauty: ['Makeup', 'Skincare', 'Haircare', 'Fragrances'],
-  // };
   const handleMouseEnter = (link) => setHoveredLink(link);
   const handleMouseLeave = () => setHoveredLink(null);
   // eslint-disable-next-line no-unused-vars
@@ -201,7 +189,7 @@ export default function Header({categories}) {
           <div className="relative">
           <Box
             onClick={() => setHovered(true)}
-            className="text-gray-700 hover:text-gray-900 "
+            className="text-gray-700 hover:text-gray-900 cursor-pointer"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
@@ -233,21 +221,21 @@ export default function Header({categories}) {
           )}
         </div>
         {isAuthenticated && userInfo?.data?.user?.isAdmin ?(<><Link to="/admin/dashboard" className="text-gray-700 hover:text-gray-900">
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center cursor-pointer">
                 <Badge badgeContent={0} color="error">
                   <ShoppingBag className="h-6 w-6" />
                 </Badge>
                 <span className="text-xs mt-1">Dashboard</span>
               </div>
             </Link></>): (<> <span onClick={()=>handleBagOpen("wishlist")} className="text-gray-700 hover:text-gray-900">
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center cursor-pointer">
                 <Badge badgeContent={0} color="error">
                   <Favorite className="h-6 w-6" />
                 </Badge>
                 <span className="text-xs mt-1">Wishlist</span>
               </div>
             </span>
-            <span onClick={()=>handleBagOpen("bag")} className="text-gray-700 hover:text-gray-900">
+            <span onClick={()=>handleBagOpen("bag")} className="cursor-pointer text-gray-700 hover:text-gray-900">
               <div className="flex flex-col items-center">
                 <Badge badgeContent={cartCount} color="error">
                   <ShoppingBag className="h-6 w-6" />

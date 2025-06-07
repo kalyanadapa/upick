@@ -1,7 +1,7 @@
 import { useGetWishlistQuery, useToggleWishlistMutation } from "../../redux/api/wishListApiSlice";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
-
+import heartImage from '../../../public/heart-like.png'
 const Wishlist = () => {
   const { data, isLoading, error } = useGetWishlistQuery();
   const [toggleWishlist] = useToggleWishlistMutation();
@@ -44,7 +44,7 @@ const Wishlist = () => {
       {wishlist.length === 0 ? (
         <div className="text-center text-gray-400 mt-10">
           <img
-            src="/empty-wishlist.svg"
+            src={heartImage}
             alt="Empty Wishlist"
             className="mx-auto w-40 mb-4 filter brightness-75"
           />
