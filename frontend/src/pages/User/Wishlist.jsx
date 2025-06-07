@@ -1,7 +1,11 @@
-import { useGetWishlistQuery, useToggleWishlistMutation } from "../../redux/api/wishListApiSlice";
+import { Link } from "react-router";
+import {
+  useGetWishlistQuery,
+  useToggleWishlistMutation,
+} from "../../redux/api/wishListApiSlice";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
-import heartImage from '../../../public/heart-like.png'
+import heartImage from "../../../public/heart-like.png";
 const Wishlist = () => {
   const { data, isLoading, error } = useGetWishlistQuery();
   const [toggleWishlist] = useToggleWishlistMutation();
@@ -31,9 +35,7 @@ const Wishlist = () => {
 
   if (error) {
     return (
-      <p className="p-4 text-red-500 bg-black">
-        Failed to load wishlist.
-      </p>
+      <p className="p-4 text-red-500 bg-black">Failed to load wishlist.</p>
     );
   }
 
@@ -63,29 +65,37 @@ const Wishlist = () => {
                 transition={{ duration: 0.3 }}
                 className="relative bg-gray-900 border border-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
               >
-                <img
-                  src={item.images?.[0]}
-                  alt={item.name}
-                  className="w-full h-48 object-cover"
-                />
-
                 <button
                   onClick={() => handleToggle(item._id)}
-                  className="absolute top-3 right-3 bg-gray-800 hover:bg-red-600 rounded-full p-1 shadow transition-colors duration-200"
+                  className="absolute top-1 right-1 bg-gray-800 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors duration-200"
                   aria-label="Remove from wishlist"
                 >
                   <CloseIcon fontSize="small" style={{ color: "white" }} />
                 </button>
+                <Link
+                  to={`/product/${item._id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <img
+                    src={item.images?.[0]}
+                    alt={item.name}
+                    className="w-full h-48 object-cover"
+                  />
 
-                <div className="p-4">
-                  <h3 className="text-sm font-semibold line-clamp-2">{item.name}</h3>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {item.brand?.name} | {item.subcategory?.name}
-                  </p>
-                  <p className="text-base font-bold text-indigo-400 mt-2">
-                    ${item.discountPrice ?? item.price}
-                  </p>
-                </div>
+                  <div className="p-4">
+                    <h3 className="text-sm font-semibold line-clamp-2">
+                      {item.name}
+                    </h3>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {item.brand?.name} | {item.subcategory?.name}
+                    </p>
+                    <p className="text-base font-bold text-indigo-400 mt-2">
+                      ${item.discountPrice ?? item.price}
+                    </p>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </AnimatePresence>
