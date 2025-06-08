@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { Badge, InputBase,Button, AppBar, Toolbar, Container ,Box} from '@mui/material';
 import { Search, Person, Favorite, ShoppingBag } from '@mui/icons-material';
@@ -145,7 +146,7 @@ export default function Header({categories}) {
     >  
       {category.name.toUpperCase().replace('-', ' & ')}
     </Link>
-    {hoveredLink === category.name && (
+    {/* {hoveredLink === category.name && (
       <div className="absolute left-0 top-full w-48 bg-white mt-1  shadow-lg rounded-md p-4 ">
         {category.subcategories.map((subcategory) => (
           <Link
@@ -157,7 +158,31 @@ export default function Header({categories}) {
           </Link>
         ))}
       </div>
-    )}
+    )} */}
+    {hoveredLink === category.name && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    transition={{ duration: 0.2 }}
+    className="absolute left-0 top-full mt-1 w-56 bg-white shadow-xl rounded-lg z-50 border border-gray-100"
+  >
+    {/* Arrow Pointer */}
+    {/* <div className="absolute -top-2 left-6 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-200"></div> */}
+
+    {/* Subcategory links */}
+    {category.subcategories.map((subcategory) => (
+      <Link
+        key={subcategory._id}
+        to={`/category/${category.name.toLowerCase()}?sub_category=${subcategory._id}`}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-colors duration-200 rounded-md"
+      >
+        {subcategory.name}
+      </Link>
+    ))}
+  </motion.div>
+)}
+
   </div>
 ))}
 
