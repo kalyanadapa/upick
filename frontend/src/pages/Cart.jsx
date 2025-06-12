@@ -129,11 +129,12 @@ import { Link } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import {
   useGetCartQuery,
-  useRemoveFromCartMutation,
+  useRemoveFromCartMutation,useCreateCheckoutSessionMutation
 } from "../redux/api/cartApiSlice";
 
 const Cart = () => {
   const [removeFromCart] = useRemoveFromCartMutation();
+const [createCheckoutSession, { isLoading: isCheckoutLoading }] = useCreateCheckoutSessionMutation();
 
   const {
     data: cartData,
@@ -141,6 +142,17 @@ const Cart = () => {
     error,
     refetch,
   } = useGetCartQuery();
+const handleCheckout = async () => {
+  try {
+    const res = await createCheckoutSession().unwrap();
+    if (res?.url) {
+      window.location.href = res.url; // Redirect to Stripe checkout
+    }
+  } catch (err) {
+    console.error("Checkout error:", err);
+    alert("Failed to start checkout. Try again.");
+  }
+};
 
   useEffect(() => {
     refetch();
@@ -269,9 +281,11 @@ const Cart = () => {
 
             <button
               className="bg-pink-500 text-white mt-6 w-full py-2 px-4 rounded-full text-lg hover:bg-pink-600 transition"
-              onClick={() => alert("Proceeding to checkout... (In-page logic)")}
+              onClick={handleCheckout}
+disabled={isCheckoutLoading}
+
             >
-              Place Order
+             {isCheckoutLoading ? "Processing..." : "Place Order"}
             </button>
 
             <p className="text-sm text-gray-500 mt-4 text-center">

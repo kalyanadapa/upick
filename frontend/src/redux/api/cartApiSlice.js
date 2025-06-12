@@ -31,6 +31,13 @@ export const cartApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Cart"],
     }),
+     createCheckoutSession: builder.mutation({
+      query: () => ({
+        url: `${CART_URL}/create-checkout-session`,
+        method: "POST",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -38,4 +45,5 @@ export const {
   useGetCartQuery,
   useAddToCartMutation,
   useRemoveFromCartMutation,
+   useCreateCheckoutSessionMutation,
 } = cartApiSlice;

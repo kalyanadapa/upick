@@ -4,6 +4,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import Cart from "../models/cart.model.js"
 import Product from "../models/product.model.js"
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2022-11-15', // Leave as-is unless Stripe docs suggest updating
+});
+
 export const addToCart = asyncHandler(async (req, res) => {
     const { productId, quantity } = req.body;  // Extract productId & quantity
     const userId = req.user._id;  // Get authenticated user ID
@@ -168,3 +174,63 @@ export const removeFromCart = asyncHandler(async (req, res) => {
 
 //   res.status(200).json(new ApiResponse(200, { url: session.url }, "Stripe checkout session created"));
 // });
+export const createStripeCheckoutSession = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+    if (!cart || !cart.items.length) {
+      return res.status(400).json({ message: "Your cart is empty" });
+    }
+
+    const lineItems = cart.items.map((item) => {
+      const product = item.productId;
+
+      if (!product || !item.price || typeof item.price !== "number") {
+        throw new Error(`Invalid product or price for item: ${item}`);
+      }
+
+      // Ensure full image URLs
+      const imageUrl = product.images?.[0]?.startsWith("http")
+        ? product.images[0]
+        : `${process.env.IMAGE_CDN}/${product.images?.[0] || ""}`;
+
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.name,
+            images: imageUrl ? [imageUrl] : [],
+            metadata: {
+              productId: product._id.toString(),
+            },
+          },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: item.quantity,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+      customer_email: req.user.email,
+      metadata: {
+        userId: userId.toString(),
+      },
+    });
+
+    res.status(200).json({ url: session.url });
+  } catch (error) {
+    console.error("Stripe session creation error:", error.message);
+    res.status(500).json({
+      message: "Failed to create Stripe checkout session",
+      error: error.message,
+    });
+  }
+});
+

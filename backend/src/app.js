@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { ApiError } from "./utils/ApiError.js";
+import bodyParser from "body-parser"; // ✅ add this
 const app = express()
 
 app.use(cors({
@@ -22,6 +23,9 @@ import productRouter from './routes/product.routes.js'
 import brandRouter from "./routes/brand.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 import wishlistRouter from "./routes/wishlist.routes.js"
+import orderRouter from "./routes/order.routes.js"
+import stripeRouter from "./routes/stripe.routes.js";
+
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Server is running successfully!" });
 });
@@ -52,6 +56,9 @@ app.use("/api/v1/category",categoryRouter )
 app.use("/api/v1/product",productRouter)
 app.use("/api/v1/cart",cartRouter)
 app.use("/api/v1/wishlist",wishlistRouter)
+app.use("/api/v1/orders",orderRouter)
+app.use("/api/v1/stripe", bodyParser.raw({ type: "application/json" }), stripeRouter);
+
 app.use(globalErrorHandler);
 // http://localhost:8000/api/v1/users/register
 
