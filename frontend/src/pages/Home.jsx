@@ -1,9 +1,6 @@
-import { Link, useParams } from "react-router-dom";
-import { useGetProductsQuery } from "../redux/api/productApiSlice";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
-import Header from "../components/Header";
-import Product from "./Products/Product";
+/* eslint-disable react/prop-types */
+// import {  useParams } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import {  Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Swiper core styles
@@ -44,7 +41,7 @@ const SwiperCarousel = ({ images }) => {
 
 
 const Home = () => {
-  const { keyword } = useParams();
+  // const { keyword } = useParams();
   // const { data, isLoading, isError } = useGetProductsQuery({ keyword });
 
   return (

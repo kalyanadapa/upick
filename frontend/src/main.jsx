@@ -38,7 +38,7 @@ const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard.jsx"));
 const Category = lazy(() => import('./pages/Category.jsx'));
 const Wishlist = lazy(() => import("./pages/User/Wishlist.jsx"));
 
-// 🔄 Animated Framer Motion Loader
+//Animated Framer Motion Loader
 const AnimatedLoader = () => {
   const bounce = {
     y: {
@@ -50,10 +50,21 @@ const AnimatedLoader = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-64 gap-2">
-      <motion.div className="w-3 h-3 bg-blue-500 rounded-full" animate={{ y: ["0%", "-100%"] }} transition={bounce} />
-      <motion.div className="w-3 h-3 bg-pink-500 rounded-full" animate={{ y: ["0%", "-80%"] }} transition={bounce} />
-      <motion.div className="w-3 h-3 bg-green-500 rounded-full" animate={{ y: ["0%", "-60%"] }} transition={bounce} />
+    <div className="flex justify-center items-center h-64">
+      <motion.span
+        className="text-3xl font-extrabold bg-gradient-to-r from-pink-700 via-orange-400 to-pink-700 text-transparent bg-clip-text"
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        style={{
+          backgroundSize: "200% 200%",
+        }}
+      >
+        Upick
+      </motion.span>
     </div>
   );
 };
