@@ -80,7 +80,7 @@ const Success = () => {
 
       try {
         // ✅ Step 1: Create the order first
-        await axios.post(`${BASE_URL}/api/v1/orders/create-from-session", { session_id: sessionId }`);
+        await axios.post(`${BASE_URL}/api/v1/orders/create-from-session`, { session_id: sessionId });
 
         // ✅ Step 2: Then fetch the order
         const { data } = await axios.get(`${BASE_URL}/api/v1/orders/session/${sessionId}`);
