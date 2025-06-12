@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Provider } from "react-redux";
 import ReactDOM from "react-dom/client";
-import { motion } from "framer-motion";
 import store from "./redux/store";
 import "./index.css";
 
@@ -12,7 +11,7 @@ import "./index.css";
 import App from "./App.jsx";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./pages/Admin/AdminRoute";
-
+import AnimatedLoader from "./components/AnimateLoader.jsx";
 // 👇 Lazy-loaded Components
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
@@ -39,39 +38,6 @@ const Category = lazy(() => import('./pages/Category.jsx'));
 const Wishlist = lazy(() => import("./pages/User/Wishlist.jsx"));
 
 //Animated Framer Motion Loader
-const AnimatedLoader = () => {
-
-
-  return (
-    <div className="flex justify-center items-center h-64">
-      <motion.span
-        className="text-4xl font-extrabold bg-gradient-to-r from-pink-700 via-orange-400 to-pink-700 text-transparent bg-clip-text"
-        animate={{
-          y: ["0%", "-10%", "0%"], // bounce effect
-          backgroundPosition: ["0% 50%", "100% 50%"], // shimmer effect
-        }}
-        transition={{
-          y: {
-            duration: 0.6,
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "easeInOut",
-          },
-          backgroundPosition: {
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear",
-          },
-        }}
-        style={{
-          backgroundSize: "200% 200%",
-        }}
-      >
-        Upick
-      </motion.span>
-    </div>
-  );
-};
 
 // 📦 HOC: Wrap routes/components with Suspense fallback
 const withSuspense = (Component, fallback = <AnimatedLoader />) => {
