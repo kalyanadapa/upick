@@ -54,7 +54,6 @@ const ProductDetails = () => {
     try {
       const res = await addToCartApi({
         productId: product._id,
-        quantity: qty,
       }).unwrap();
 
       dispatch(addToCart(res));
@@ -102,7 +101,7 @@ const ProductDetails = () => {
             <img
               src={selectedImage || product.images[0]}
               alt={product.name}
-              className="max-w-[500px] h-[500px] object-cover rounded-xl shadow-lg"
+              className="w-full max-w-md object-cover rounded-xl shadow-lg"
             />
             <div className="grid grid-cols-4 gap-3">
               {product.images.map((img, i) => (
@@ -148,34 +147,20 @@ const ProductDetails = () => {
                   <FaShoppingCart /> Quantity: <span className="font-semibold text-white">{product.quantity}</span>
                 </h3>
                 <h3 className="flex items-center gap-2">
-                  <FaBox /> In Stock: <span className="font-semibold text-white">{product.countInStock}</span>
+                  <FaBox /> In Stock: <span className="font-semibold text-white">{product.countInStock<=0?"OUT OF STOCK" : product.countInStock}</span>
                 </h3>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-4">
               <Ratings value={product.rating} text={`${product.numReviews} reviews`} />
-              {product.countInStock > 0 ? (
-                <select
-                  value={qty}
-                  onChange={(e) => setQty(Number(e.target.value))}
-                  className="p-2 w-20 rounded-lg text-black"
-                >
-                  {[...Array(product.countInStock).keys()].map((x) => (
-                    <option key={x + 1} value={x + 1}>
-                      {x + 1}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <p className="text-red-600 font-semibold mt-2">Out of Stock</p>
-              )}
+             
             </div>
 
             <button
               onClick={addToCartHandler}
               disabled={product.countInStock === 0 || isAdding}
-              className="bg-pink-600 hover:bg-pink-700 disabled:bg-pink-900 disabled:cursor-not-allowed text-white py-3 rounded-lg mt-4 transition-colors duration-200 font-semibold"
+              className="bg-pink-600 hover:bg-pink-700 disabled:bg-pink-900 disabled:cursor-not-allowed text-white py-3 rounded-lg mt-4 transition-colors duration-200 font-semibold xs:hidden hidden sm:hidden md:block "
             >
               {isAdding ? "Adding..." : "Add To Cart"}
             </button>

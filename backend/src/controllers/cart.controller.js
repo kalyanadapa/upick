@@ -11,9 +11,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 export const addToCart = asyncHandler(async (req, res) => {
-    const { productId, quantity } = req.body;  // Extract productId & quantity
+    const { productId, } = req.body;  // Extract productId & quantity
     const userId = req.user._id;  // Get authenticated user ID
-
+    const quantity=1;
     // Validate if product exists
     const product = await Product.findById(productId);
     if (!product) {
@@ -135,45 +135,6 @@ export const removeFromCart = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, cart, "Product removed from cart successfully"));
 });
 
-// export const createStripeCheckoutSession = asyncHandler(async (req, res) => {
-//   const userId = req.user._id;
-
-//   const cart = await Cart.findOne({ userId }).populate("items.productId");
-
-//   if (!cart || !cart.items.length) {
-//     throw new ApiError(400, "Cart is empty");
-//   }
-
-//   const lineItems = cart.items.map((item) => {
-//     const product = item.productId;
-//     return {
-//       price_data: {
-//         currency: 'usd',
-//         product_data: {
-//           name: product.name,
-//           images: [product.images[0]],
-//         },
-//         unit_amount: Math.round(product.price * 100), // amount in cents
-//       },
-//       quantity: item.quantity,
-//     };
-//   });
-
-//   // Optional: Add shipping & tax manually if needed
-//   const session = await stripe.checkout.sessions.create({
-//     payment_method_types: ['card'],
-//     line_items: lineItems,
-//     mode: 'payment',
-//     success_url: `${process.env.FRONTEND_URL}/order/success`,
-//     cancel_url: `${process.env.FRONTEND_URL}/cart`,
-//     customer_email: req.user.email, // optional
-//     metadata: {
-//       userId: userId.toString(),
-//     },
-//   });
-
-//   res.status(200).json(new ApiResponse(200, { url: session.url }, "Stripe checkout session created"));
-// });
 export const createStripeCheckoutSession = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;
