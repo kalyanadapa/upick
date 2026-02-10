@@ -61,20 +61,21 @@ Deployment:
 ---
 
 ## Screenshots
+### Admin login
+<img width="1433" height="817" alt="image" src="https://github.com/user-attachments/assets/e8d893b8-3058-4472-9f2f-ba018f13b5d3" />
 
 ### Home Page
-![Home](screenshots/home.png)
+
+<img width="1440" height="809" alt="image" src="https://github.com/user-attachments/assets/b94c36cd-3d8b-4308-911d-c73a750f14b8" />
 
 ### Category Page
-![Category](screenshots/category.png)
+<img width="1435" height="816" alt="image" src="https://github.com/user-attachments/assets/af5d282f-73c0-44ec-a969-e281c6314d66" />
+
 
 ### Product Page
-![Product](screenshots/product.png)
+<img width="1440" height="816" alt="image" src="https://github.com/user-attachments/assets/3036e7d5-163c-4330-a1f4-74a932f69d30" />
 
-### Wishlist
-![Wishlist](screenshots/wishlist.png)
 
----
 
 ## Architecture Overview
 
@@ -94,5 +95,4 @@ Database:
 
 ---
 
-## Folder Structure
 
