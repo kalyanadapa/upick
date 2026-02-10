@@ -42,7 +42,7 @@ https://upick-1.onrender.com/
 Frontend:
 - React (Vite)
 - Tailwind CSS
-- Redux Toolkit (if used, add here)
+- Rtk Query for state management
 - Axios
 
 Backend:
