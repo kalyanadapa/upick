@@ -14,7 +14,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useSelector,useDispatch } from "react-redux";
 import { useRegisterMutation , useLoginMutation} from "../redux/api/usersApiSlice.js";
 import Logo from "./Logo";
-import { closeLoginModal } from "../redux/features/auth/authSlice";
+import { closeLoginModal, openSignUpModal } from "../redux/features/auth/authSlice";
 import { setCredentials , setCartCount } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 const LoginModal = ({ }) => {
@@ -140,7 +140,7 @@ const LoginModal = ({ }) => {
           New User ?
         </span> { "  "}
         <Button
-      type="submit"
+      onClick={() => dispatch(openSignUpModal())}
       sx={{
         marginLeft:'5px',
         padding: '12px', // same as py-3

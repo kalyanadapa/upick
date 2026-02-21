@@ -32,6 +32,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoginModalOpen: false,
+  isSignUpModalOpen: false,
   cartCount:0,
   // Directly retrieve userInfo from localStorage and parse it if it exists
   userInfo: localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null,
@@ -56,12 +57,20 @@ const authSlice = createSlice({
     },
     openLoginModal: (state) => {
       state.isLoginModalOpen = true;
+      state.isSignUpModalOpen = false;
     },
     setCartCount:(state,action)=>{
       state.cartCount=action.payload;
     },
     closeLoginModal: (state) => {
       state.isLoginModalOpen = false;
+    },
+    openSignUpModal: (state) => {
+      state.isSignUpModalOpen = true;
+      state.isLoginModalOpen = false;
+    },
+    closeSignUpModal: (state) => {
+      state.isSignUpModalOpen = false;
     },
     logout: (state) => {
       // Clear the state and localStorage on logout
@@ -72,5 +81,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout , openLoginModal, closeLoginModal,setCartCount } = authSlice.actions;
+export const { setCredentials, logout , openLoginModal, closeLoginModal, openSignUpModal, closeSignUpModal, setCartCount } = authSlice.actions;
 export default authSlice.reducer;

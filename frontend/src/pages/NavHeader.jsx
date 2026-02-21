@@ -9,12 +9,11 @@ import { Link } from 'react-router';
 import Logo from './Logo.jsx';
 import { useSelector, useDispatch } from "react-redux";
 import { useRegisterMutation , useGetCurrentUserQuery} from "../redux/api/usersApiSlice.js";
-import { setCartCount, setCredentials } from "../redux/features/auth/authSlice";
+import { setCartCount, setCredentials, closeSignUpModal } from "../redux/features/auth/authSlice";
 import { toast } from 'react-hot-toast';
 import LogOutModal from "./LogOut.jsx"
-import { openLoginModal } from '../redux/features/auth/authSlice';
+import { openLoginModal, openSignUpModal } from '../redux/features/auth/authSlice';
 export default function Header({categories}) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate=useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false); 
@@ -80,7 +79,7 @@ export default function Header({categories}) {
       console.log("User registered successfully:", response.data);
       toast.success("User successfully registered");
     
-      setIsModalOpen(false)
+      dispatch(closeSignUpModal());
       // Clear form data after successful registration
       setFormData({
         fullName: "",
@@ -119,8 +118,6 @@ export default function Header({categories}) {
         
           {/* Logo */}
           <SignUpModal
-        open={isModalOpen}
-        handleClose={() => setIsModalOpen(false)}
         onSubmit={handleSignUp}
         isLoading ={isRegister }
       />
@@ -238,7 +235,7 @@ export default function Header({categories}) {
               </p>
               <p className="text-gray-500 text-xs mt-1">
                 Please<Button onClick={() => dispatch(openLoginModal())} className="text-blue-500 hover:underline">Sign In</Button> / 
-                <Button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:underline">Sign Up</Button>
+                <Button onClick={() => dispatch(openSignUpModal())} className="text-blue-500 hover:underline">Sign Up</Button>
               </p>
               </>}
              
