@@ -19,6 +19,7 @@ export default function Header({categories}) {
   const [openDialog, setOpenDialog] = useState(false); 
   const [hoveredLink, setHoveredLink] = useState(null);
   const [hovered, setHovered]= useState(false);
+  const [signUpError, setSignUpError] = useState("");
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
   const [redirectPath, setRedirectPath] = useState(null); 
@@ -57,6 +58,7 @@ export default function Header({categories}) {
   }, [isAuthenticated, redirectPath, navigate]);
   
   const handleSignUp = async (formData) => {
+    setSignUpError("");
     try {
       // Creating a FormData object for file uploads
       const form = new FormData();
@@ -80,6 +82,7 @@ export default function Header({categories}) {
       toast.success("User successfully registered");
     
       dispatch(closeSignUpModal());
+      setSignUpError("");
       // Clear form data after successful registration
       setFormData({
         fullName: "",
@@ -92,7 +95,7 @@ export default function Header({categories}) {
     } catch (error) {
       // Handle error
       console.error("Registration error:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "An error occurred during registration");
+      setSignUpError(error?.data?.message || error.response?.data?.message || "An error occurred during registration");
     }
   };
   const handleClickOpen = () => {
@@ -119,7 +122,9 @@ export default function Header({categories}) {
           {/* Logo */}
           <SignUpModal
         onSubmit={handleSignUp}
-        isLoading ={isRegister }
+        isLoading={isRegister}
+        error={signUpError}
+        onClearError={() => setSignUpError("")}
       />
       <LogOutModal open={openDialog} handleClose={handleClose}/>
           <div className="flex-shrink-0">

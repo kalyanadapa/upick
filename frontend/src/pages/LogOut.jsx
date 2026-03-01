@@ -4,8 +4,10 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+import PropTypes from 'prop-types';
 import { useLogoutMutation } from "../redux/api/usersApiSlice";
 import { logout,setCartCount } from "../redux/features/auth/authSlice";
+import { apiSlice } from "../redux/api/apiSlice";
 import { useNavigate } from 'react-router';
 import { useDispatch } from "react-redux";
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -20,7 +22,8 @@ export default function LogOut({ open, handleClose }) {
         try {
           await logoutApiCall().unwrap();
           dispatch(logout());
-          dispatch(setCartCount(0))
+          dispatch(setCartCount(0));
+          dispatch(apiSlice.util.resetApiState());
           handleClose()
           navigate("/"); 
         } catch (error) {
@@ -29,7 +32,7 @@ export default function LogOut({ open, handleClose }) {
             localStorage.clear()
             document.cookie = "accessToken=; Max-Age=0; path=/; HttpOnly; secure";
             document.cookie = "refreshToken=; Max-Age=0; path=/; HttpOnly; secure";
-          
+            dispatch(apiSlice.util.resetApiState());
             // Refresh the page to log the user out or redirect to login page
             window.location.reload(); 
           }
@@ -58,3 +61,8 @@ export default function LogOut({ open, handleClose }) {
     </React.Fragment>
   );
 }
+
+LogOut.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+};

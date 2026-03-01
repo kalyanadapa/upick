@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { closeSignUpModal, openLoginModal } from "../redux/features/auth/authSlice";
 
 // eslint-disable-next-line react/prop-types
-const SignUpModal = ({isLoading, onSubmit }) => {
+const SignUpModal = ({isLoading, onSubmit, error, onClearError }) => {
   const dispatch = useDispatch();
   const { isSignUpModalOpen } = useSelector((state) => state.auth);
   const scrollContainerRef = useRef(null);
@@ -31,6 +31,13 @@ const SignUpModal = ({isLoading, onSubmit }) => {
     coverImage: null,
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  // Clear error when modal opens
+  useEffect(() => {
+    if (isSignUpModalOpen && onClearError) {
+      onClearError();
+    }
+  }, [isSignUpModalOpen]);
 
   // Auto-focus the scroll container when modal opens
   useEffect(() => {
@@ -69,6 +76,7 @@ const SignUpModal = ({isLoading, onSubmit }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    if (onClearError) onClearError();
     setFormData({
       ...formData,
       [name]: files ? files[0] : value,
@@ -221,6 +229,21 @@ const SignUpModal = ({isLoading, onSubmit }) => {
               },
             }}
           >
+            {error && (
+              <Box
+                sx={{
+                  mb: 2,
+                  p: 2,
+                  bgcolor: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '12px',
+                  color: '#dc2626',
+                  fontSize: '14px',
+                }}
+              >
+                {error}
+              </Box>
+            )}
             <form onSubmit={handleFormSubmit}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                 <TextField

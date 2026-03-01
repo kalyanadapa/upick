@@ -13,6 +13,7 @@ import "./Navigation.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
+import { apiSlice } from "../../redux/api/apiSlice";
 import FavoritesCount from "../Products/FavoritesCount";
 
 const Navigation = () => {
@@ -35,6 +36,7 @@ const Navigation = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
+      dispatch(apiSlice.util.resetApiState());
       navigate("/login");
     } catch (error) {
       console.error(error);

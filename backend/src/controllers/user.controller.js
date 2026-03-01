@@ -187,10 +187,38 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
-  // Return response
+  // Generate tokens and set cookies (auto-login after registration)
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
+    user._id
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
+  // Return response with cookies
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "User registered successfully"));
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, {
+      ...options,
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+    })
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: createdUser,
+          accessToken,
+          refreshToken,
+          cartCount: 0,
+        },
+        "User registered successfully"
+      )
+    );
 });
 
 const loginUser = asyncHandler(async (req, res) => {
