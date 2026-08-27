@@ -5,10 +5,23 @@ import { ApiError } from "./utils/ApiError.js";
 import bodyParser from "body-parser"; // ✅ add this
 const app = express()
 
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}))
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (process.env.CORS_ORIGIN === "*" || allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, origin);
+    }
+    return callback(null, origin);
+  },
+  credentials: true
+}));
 
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
@@ -25,6 +38,7 @@ import cartRouter from "./routes/cart.routes.js"
 import wishlistRouter from "./routes/wishlist.routes.js"
 import orderRouter from "./routes/order.routes.js"
 import stripeRouter from "./routes/stripe.routes.js";
+import notificationRouter from "./routes/notification.routes.js";
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Server is running successfully!" });
@@ -57,7 +71,9 @@ app.use("/api/v1/product",productRouter)
 app.use("/api/v1/cart",cartRouter)
 app.use("/api/v1/wishlist",wishlistRouter)
 app.use("/api/v1/orders",orderRouter)
+app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/stripe", bodyParser.raw({ type: "application/json" }), stripeRouter);
+
 
 app.use(globalErrorHandler);
 // http://localhost:8000/api/v1/users/register

@@ -6,8 +6,10 @@ import Loader from "../../components/Loader";
 import { useProfileMutation } from "../../redux/api/usersApiSlice";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { Link } from "react-router-dom";
+import NotificationToggle from "../../components/NotificationToggle";
 
 const Profile = () => {
+
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -112,10 +114,15 @@ const Profile = () => {
             </div>
             {loadingUpdateProfile && <Loader />}
           </form>
+
+          <div className="mt-8">
+            <NotificationToggle />
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
 
 export default Profile;

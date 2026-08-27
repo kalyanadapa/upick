@@ -34,8 +34,10 @@ const PlaceOrder = lazy(() => import("./pages/Orders/PlaceOrder.jsx"));
 const Order = lazy(() => import("./pages/Orders/Order.jsx"));
 const OrderList = lazy(() => import("./pages/Admin/OrderList.jsx"));
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard.jsx"));
+const NotificationTest = lazy(() => import("./pages/Admin/NotificationTest.jsx"));
 const Category = lazy(() => import('./pages/Category.jsx'));
 const Wishlist = lazy(() => import("./pages/User/Wishlist.jsx"));
+
 
 //Animated Framer Motion Loader
 
@@ -84,7 +86,9 @@ const router = createBrowserRouter(
         <Route path="product/update/:_id" element={withSuspense(ProductUpdate)} />
         <Route path="orderlist" element={withSuspense(OrderList)} />
         <Route path="dashboard" element={withSuspense(AdminDashboard)} />
+        <Route path="notifications" element={withSuspense(NotificationTest)} />
       </Route>
+
     </Route>
   )
 );

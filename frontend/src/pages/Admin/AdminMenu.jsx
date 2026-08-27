@@ -108,8 +108,20 @@ const AdminMenu = () => {
                 Manage Orders
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
+                to="/admin/notifications"
+                style={({ isActive }) => ({
+                  color: isActive ? "greenyellow" : "white",
+                })}
+              >
+                Push Notifications
+              </NavLink>
+            </li>
           </ul>
         </section>
+
       )}
     </>
   );

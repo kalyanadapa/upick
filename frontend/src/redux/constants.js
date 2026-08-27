@@ -6,7 +6,7 @@
 // export const ORDERS_URL = "/api/orders";
 // export const PAYPAL_URL = "/api/config/paypal";
 // Set BASE_URL to your backend server
-export const BASE_URL = import.meta.env.VITE_API_URL
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export const USERS_URL = `${BASE_URL}/api/v1/users`;
 export const CATEGORY_URL = `${BASE_URL}/api/v1/category`;
 export const PRODUCT_URL = `${BASE_URL}/api/v1/product`;
@@ -16,4 +16,5 @@ export const PAYPAL_URL = `${BASE_URL}/api/config/paypal`;
 export const BRAND_URL = `${BASE_URL}/api/v1/brands`;
 export const CART_URL =`${BASE_URL}/api/v1/cart`
 export const WISH_LIST_URL =`${BASE_URL}/api/v1/wishlist`
+export const NOTIFICATIONS_URL = `${BASE_URL}/api/v1/notifications`;
 
